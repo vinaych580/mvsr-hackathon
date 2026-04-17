@@ -1,0 +1,9 @@
+crop_id,crop_name,season,base_yield_kg_per_acre,water_requirement_mm,npk_n_kg_per_acre,npk_p_kg_per_acre,npk_k_kg_per_acre,temp_min_c,temp_max_c,growing_degree_days,avg_input_cost_inr_per_acre,mandi_price_min_inr_per_kg,mandi_price_max_inr_per_kg
+rice,Rice (Paddy),Kharif,2700,1200,60,30,30,20,35,1800,27000,18,30
+wheat,Wheat,Rabi,2000,500,50,25,20,10,30,1600,22000,20,32
+maize,Maize,Kharif/Rabi,2400,600,60,30,20,18,35,1500,22000,15,26
+sugarcane,Sugarcane,Annual,34000,1800,100,50,50,20,38,3000,58000,3,4
+cotton,Cotton,Kharif,1000,700,80,40,40,21,37,1900,32000,55,85
+pulses,Pulses (Chickpea/Tur),Rabi/Kharif,800,450,25,20,20,15,32,1300,17000,55,90
+groundnut,Groundnut,Kharif,1050,550,30,25,25,20,34,1400,23000,45,75
+soybean,Soybean,Kharif,1100,600,30,25,25,18,33,1400,20000,40,70

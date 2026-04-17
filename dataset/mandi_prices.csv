@@ -1,0 +1,17 @@
+region_id,crop_id,date,price_inr_per_kg,market_name
+telangana_medak,cotton,2025-10-01,67.0,Medak APMC
+telangana_medak,soybean,2025-10-01,52.0,Medak APMC
+mp_sehore,soybean,2025-10-01,49.0,Sehore Mandi
+mp_sehore,wheat,2025-10-01,27.0,Sehore Mandi
+punjab_ludhiana,rice,2025-10-01,24.0,Ludhiana Mandi
+punjab_ludhiana,wheat,2025-10-01,29.0,Ludhiana Mandi
+telangana_medak,maize,2025-10-01,19.5,Medak APMC
+mp_sehore,maize,2025-10-01,18.0,Sehore Mandi
+punjab_ludhiana,maize,2025-10-01,20.5,Ludhiana Mandi
+telangana_medak,sugarcane,2025-10-01,3.4,Medak APMC
+mp_sehore,sugarcane,2025-10-01,3.6,Sehore Mandi
+telangana_medak,pulses,2025-10-01,72.0,Medak APMC
+mp_sehore,pulses,2025-10-01,68.0,Sehore Mandi
+punjab_ludhiana,pulses,2025-10-01,65.0,Ludhiana Mandi
+telangana_medak,groundnut,2025-10-01,58.0,Medak APMC
+mp_sehore,groundnut,2025-10-01,55.0,Sehore Mandi

@@ -1,0 +1,265 @@
+Phase 1 — Discovery & Scoping
+Objective: Lock down the problem boundary and target user persona.
+Activities: Define 8 pilot crops covering India's major agro-climatic zones, 2–3 pilot regions, input variables (soil pH, NPK, rainfall, temperature, irrigation, seed variety, sowing date, area).
+Pilot Crop List (Top 8 grown in India):
+#	Crop	Season	Why included
+1	Rice (Paddy)	Kharif	Largest food grain, grown nationwide
+2	Wheat	Rabi	Second-largest food grain, dominates north India
+3	Maize	Kharif/Rabi	Versatile, growing demand for feed & ethanol
+4	Sugarcane	Annual	High-value cash crop, UP/Maharashtra/Karnataka
+5	Cotton	Kharif	Major fibre crop, Gujarat/Maharashtra/Telangana
+6	Pulses (Chickpea/Tur)	Rabi/Kharif	Protein staple, MP/Rajasthan/Maharashtra
+7	Groundnut	Kharif	Major oilseed, Gujarat/Andhra Pradesh
+8	Soybean	Kharif	Fast-growing oilseed, MP/Maharashtra
+Optional stretch crops (add if time permits): Mustard, Bajra (Pearl Millet), Jowar (Sorghum) — to reach a top-10 list and cover dryland/millet farmers.
+Output: One-page problem statement, persona card, "Simulation Input/Output Contract" document, crop_catalogue.md listing each crop with season, typical yield range, base cost/acre, and key risks.
+Suggested folder: docs/01_discovery/
+Phase 2 — Data Acquisition & Preparation
+Objective: Gather and clean datasets that drive every prediction across all 8 pilot crops.
+Sources: SoilGrids, IMD/NASA POWER API, ICAR/FAOSTAT, Agmarknet, data.gov.in district-wise crop production.
+Activities: Build ingestion scripts, normalize units, handle missing values, tag every record with crop_id so the engine and ML models can filter per crop, store in tabular format.
+Per-crop reference table: Build crop_parameters.csv containing one row per crop with base yield (kg/acre), water requirement, NPK requirement, temperature range, growing-degree days, average input cost, and typical mandi price band.
+Output: Clean dataset/ with soil.csv, weather.csv, yield_history.csv (with crop_id), mandi_prices.csv (with crop_id), crop_parameters.csv, and data_dictionary.md.
+Suggested module: data_ingestion/
+Phase 3 — Core Simulation Engine (Rule-based)
+Objective: Build deterministic engine computing yield, cost, revenue, profit, and risk score using agronomic formulas.
+Sub-modules:
+YieldEstimator — base yield × soil factor × climate factor × irrigation factor
+CostCalculator — seed + fertilizer + labour + irrigation + pesticide + machinery
+RevenueCalculator — yield × current/forecast mandi price
+RiskScorer — composite of drought, pest, flood, price-volatility scores (0–100)
+Output: Pure-function library callable as simulate(strategy_dict) → result_dict.
+Suggested folder: engine/
+Phase 4 — AI / ML Layer
+Objective: Replace or augment rule-based factors with learned models trained across all 8 pilot crops.
+Models:
+Yield Prediction — Single regression model (Random Forest / XGBoost / LightGBM) with crop_id as a categorical feature, OR one model per crop if data allows. Trained on historical yield with features (soil, weather, crop, sowing date).
+Risk Classifier — Multi-label classifier for {drought, pest, disease, flood, price-crash}, with crop-specific risk profiles (e.g., bollworm for cotton, blast for rice).
+Crop Recommendation — Rank top-3 from the full 8-crop catalogue by expected profit for the given farm.
+Optional LLM Advisor — Convert numeric results to plain-language advice in local language.
+Output: Serialized models in models/ and predict.py inference API supporting all 8 crops.
+Suggested folder: ml/
+Phase 5 — Application Layer (API + Frontend with Clay Design System)
+5A. Backend API
+Endpoints: POST /simulate, GET /crops, GET /weather/:lat/:lon, POST /recommend, POST /compare-strategies.
+Suggested folder: backend/
+5B. Frontend with Clay Aesthetic Design System
+5B.1 — Clay Design System Definition
+
+Create frontend/src/design-system/ with:
+
+Color Palette (Earthy & Soft Pastels):
+Primary Greens: #A8D5BA (soft sage), #7EC8A3 (muted mint)
+Soil Browns: #D4A574 (warm tan), #C9956F (clay brown)
+Sunny Yellows: #F4E4A6 (pale gold), #F9D97E (soft butter)
+Neutral Creams: #F5F1E8 (off-white), #E8E4D9 (warm beige)
+Accent Greens: #6BA587 (deeper sage for CTAs)
+Risk Reds (soft): #E8A89B (muted coral for warnings)
+Typography:
+Headings: Rounded sans-serif (e.g., Poppins, Quicksand) for friendly feel
+Body: Readable sans-serif (e.g., Inter, Open Sans)
+Clay Texture & Shadows:
+Base shadow: 0 4px 12px rgba(0, 0, 0, 0.08) (soft, diffuse)
+Depth shadow: 0 8px 24px rgba(0, 0, 0, 0.12) (for 3D clay effect)
+Inset shadow for "squeezed" state: inset 0 2px 4px rgba(0, 0, 0, 0.1)
+Animation Library (Framer Motion):
+Squish on hover: Scale 0.98 + shadow reduction (100ms ease-out)
+Morph on click: Slight rotation + scale pulse (200ms)
+Smooth transitions: All 300ms cubic-bezier(0.34, 1.56, 0.64, 1) for bouncy feel
+5B.2 — Component Library (Clay-Styled)
+
+Component	Description	Interaction
+ClayButton	Rounded, soft-shadowed button with clay texture overlay	Squish on hover (scale 0.98), press animation on click
+ClayCard	Pressed-clay-tablet appearance with rounded corners, warm shadow	Lift on hover (shadow deepens), slight tilt
+ClayBubble	Squeezable bubble container for yield/profit data	Morph on click, scale pulse
+ClaySlider	Soil/climate adjustment slider with clay-textured thumb	Thumb squishes on drag, smooth easing
+ClayToggle	Climate condition toggle (e.g., "Drought Mode")	Smooth morph between states, satisfying click feedback
+ClayDiorama	3D scene container (Three.js/Babylon.js) showing farm plot	Subtle parallax on mouse move, gentle rotation
+RiskGauge	Circular risk score display (0–100) with clay-textured ring	Animated fill on load, color gradient (green → yellow → red)
+StrategyTablet	Clay-tablet card for strategy details (crop, date, cost, yield)	Hover lift + shadow, click to expand
+5B.3 — Frontend Screens with Clay Aesthetic
+
+Screen 1: Landing Page
+
+Hero section with clay-sculpted agricultural scene (3D diorama using Three.js)
+Soft earthy background gradient (cream to pale green)
+Feature cards as clay tablets showcasing: yield prediction, cost estimation, risk assessment
+CTA button: Large, satisfyingly pressable clay button ("Start Simulating")
+Gentle animations: Clay elements morph on scroll, farm scene rotates slowly
+Screen 2: Farm Setup
+
+Location picker with map (Leaflet) overlaid on clay-textured background
+Soil input form with clay-styled sliders for pH, NPK, moisture
+Area input as a squeezable bubble input field
+Auto-fill button (clay-textured) to pull live weather/soil data
+Playful squish animations on slider interaction
+Screen 3: Strategy Builder
+
+Crop selector as a grid of 8 clay cards (rice, wheat, maize, sugarcane, cotton, pulses, groundnut, soybean) — each crop shown as a small 3D clay illustration with its name, season badge (Kharif/Rabi), and typical yield range
+Optional "More crops" expander to reveal stretch crops (mustard, bajra, jowar) when added
+Filter chips at the top: Season (Kharif / Rabi / Annual), Crop type (Cereal / Pulse / Oilseed / Cash crop / Fibre)
+Sowing date picker with calendar in clay aesthetic (auto-suggests window based on selected crop's season)
+Irrigation & fertilizer plan as adjustable clay sliders (defaults pulled from crop_parameters.csv for the chosen crop)
+"Run Simulation" button: Large, prominent clay button with press feedback
+Real-time cost preview in a clay bubble (updates as user adjusts sliders)
+Screen 4: Simulation Results Dashboard
+
+Yield prediction in a large clay bubble with animated fill
+Cost breakdown as stacked clay cards (seed, fertilizer, labour, etc.)
+Profit & ROI in highlighted clay bubbles with color coding (green for positive)
+Risk score as a circular clay gauge (0–100) with sub-scores (drought, pest, flood, price)
+Charts (yield trend, cost distribution) with clay-textured axes and soft colors
+"Compare Strategies" button to navigate to comparison view
+Screen 5: Strategy Comparison
+
+Side-by-side layout of 2–3 strategies as clay tablets
+Each tablet shows: crop, yield, cost, profit, risk score
+Highlight differences with soft color overlays (green for better, red for worse)
+Interactive toggles to swap strategies or add a new one
+Export to PDF button (clay-styled)
+5B.4 — 3D Clay Dioramas (Wow Factor)
+
+Use Three.js or Babylon.js to create:
+
+Landing page diorama: Stylized farm landscape with clay-textured terrain, crops at different growth stages, farmer figure
+Farm plot visualization: 2D/isometric view of the actual plot with crop growth animation over time
+Climate stress test diorama: Show the same farm under normal, +1°C, +2°C, and drought scenarios side-by-side
+Styling:
+
+Clay-like material (matte, slightly rough texture)
+Soft, diffuse lighting (no harsh shadows)
+Pastel colors matching the design system
+Subtle parallax on mouse move for depth
+5B.5 — Animations & Interactions
+
+Squish on hover: All interactive elements scale down 2–3% with shadow reduction
+Morph on click: Slight rotation (±2°) + scale pulse (1.0 → 1.05 → 1.0)
+Slider drag: Thumb element squishes inward, smooth easing
+Toggle switch: Smooth color transition + icon morph
+Data load: Animated fill of bubbles and gauges (1–2 second duration)
+Scroll animations: Clay elements fade in and scale up as user scrolls
+5B.6 — Tech Stack for Frontend
+
+Framework: React 18+
+Styling: Tailwind CSS + custom CSS for clay textures (box-shadow, gradients)
+3D Graphics: Three.js (with React Three Fiber for easier integration) or Babylon.js
+Animations: Framer Motion for UI animations, Three.js for 3D morphing
+State Management: Redux or Zustand
+Maps: Leaflet + React-Leaflet
+Charts: Recharts or Chart.js (styled with clay aesthetic)
+Forms: React Hook Form + custom clay-styled inputs
+Suggested folder: frontend/
+Phase 6 — Documentation, Demo & Deployment
+Objective: Package for judges/end-users.
+Activities: Write README.md, architecture diagram, API docs, 3-minute demo video, sample walkthroughs, deploy backend and frontend.
+Output: Public URL + GitHub repo with one-click setup.
+Design documentation: Add DESIGN_SYSTEM.md with color tokens, component specs, animation guidelines, and clay texture recipes.
+Feature List
+Practical (must-have, judge-expected)
+#	Feature	What it does
+1	Crop Yield Predictor	Predicts kg/acre based on soil + weather + crop
+2	Cost Estimator	Itemized cost sheet (seed, fertilizer, labour, etc.)
+3	Profit & ROI Calculator	Net profit, ROI %, break-even point
+4	Risk Score Dashboard	0–100 score with drought/pest/flood/price sub-scores
+5	Crop Recommendation Engine	Ranks all 8 pilot crops by expected profit and surfaces the top-3 recommendations for the given farm
+6	Strategy Comparison	Compare 2–3 "what-if" scenarios side by side
+7	Weather & Soil Auto-Fill	Pulls live data when farmer enters location
+8	Mandi Price Lookup	Current and 3-month historical price of selected crop
+9	Multi-language UI	English + 2 regional languages (Hindi, Telugu, etc.)
+10	PDF Report Export	Downloadable simulation report for offline sharing
+11	Advanced Profit Estimator	Projects gross margin, net margin, ROI, and break-even under normal/optimistic/pessimistic market scenarios
+12	Smart Crop Recommendations (Context-Aware)	Suggests top crops using location, soil type, season window, and farmer budget constraints
+13	Smart Yield + Risk Score	Combines predicted yield with weather volatility, pest exposure, and price risk into a single confidence score
+14	Location-Based Insights	Provides district-specific sowing window, rainfall trend, expected mandi trend, and top local crop alternatives
+Wow-Factor (differentiators that win demos)
+#	Feature	Why it wows
+W1	Digital Twin of the Farm (Clay Diorama)	3D clay-textured isometric farm visualization with seasonal crop growth animation
+W2	AI Voice Assistant in Local Language	Farmer speaks "What if I plant cotton instead of wheat?" → LLM + TTS replies with simulation result
+W3	Climate-Change Stress Test	Run same strategy under +1°C / +2°C / -20% rainfall scenarios with side-by-side clay dioramas
+W4	Pest & Disease Outbreak Prediction	Time-series model flags high-risk weeks and suggests preventive action
+W5	Satellite-Image NDVI Integration	Pull Sentinel-2 NDVI for plot and auto-calibrate soil-health input
+W6	Carbon-Credit & Sustainability Score	Estimate CO₂ sequestered by chosen practice (organic, no-till, drip irrigation)
+W7	Crowd-Wisdom Layer	Anonymized results from nearby farmers shown as benchmark ("farms like yours earned ₹X/acre")
+W8	Insurance & Loan Recommender	Maps risk score to suitable PMFBY / KCC loan products
+W9	WhatsApp / SMS Bot Front-End	Low-bandwidth interface for farmers without smartphones
+W10	Reinforcement-Learning Strategy Optimizer	Auto-discovers optimal sowing-date + fertilizer-schedule by simulating thousands of runs
+W11	Hyperlocal Advisory Feed	Auto-generates weekly action tips ("irrigate now", "delay sowing 5 days", "watch pest risk") per location
+W12	Market Timing Signal	Signals sell-now vs hold decisions using local mandi trend, volatility, and price forecast confidence
+Additional Feature Ideas (Optional, high-impact, manageable)
+#	Feature	What it adds
+A1	Input Budget Planner	Recommends fertilizer/irrigation plan within a fixed budget cap while maximizing expected profit
+A2	Crop Suitability Heatmap	Visual map score (0-100) for each crop by district/block using soil + climate compatibility
+A3	Early Warning Alerts	Threshold-based alerts for heat stress, heavy rain, pest-prone weeks, and sudden mandi drops
+A4	Explainable Recommendation Panel	Shows "why this crop ranked #1" with weighted factors (soil fit, water need, market price, risk)
+A5	Seasonal Calendar Assistant	Personalized month-wise checklist for sowing, irrigation, fertilization, and harvest readiness
+A6	Post-Harvest Advisory	Storage, transport, and sale-window suggestions to reduce losses and improve realized price
+A7	Peer Benchmarking (Anonymized)	Compares a farmer strategy against similar nearby farms ("farms like yours")
+A8	Offline Sync Mode	Supports low-connectivity usage with cached weather/prices and background sync when online
+Documentation Deliverable Outline
+Place under docs/:
+
+README.md — one-paragraph pitch, screenshots, quick-start
+architecture.md — high-level diagram + module responsibilities
+data_dictionary.md — every field, unit, source
+api_reference.md — endpoint contracts
+model_card.md — training data, metrics, limitations of ML models
+user_guide.md — step-by-step for farmer persona
+demo_script.md — 3-minute walkthrough for judges
+DESIGN_SYSTEM.md — Clay design tokens, component specs, animation guidelines, texture recipes, color palette, typography rules
+Working Prototype Deliverable Outline
+Minimum viable demo must include:
+
+Phase 2 dataset loaded for at least one region + all 8 pilot crops (rice, wheat, maize, sugarcane, cotton, pulses, groundnut, soybean)
+Phase 3 rule-based engine fully functional for every pilot crop
+Phase 4 with at least the yield-prediction model trained on the multi-crop dataset
+Phase 5 with all 5 frontend screens working end-to-end, fully styled with clay aesthetic, and the strategy builder showing the 8-crop selector grid
+Phase 6 deployed at a public URL
+Clay design system applied consistently across all screens
+At least one 3D diorama (landing page or farm plot visualization)
+Smooth animations on all interactive elements (buttons, sliders, toggles)
+High-Level Architecture
+Phase-to-Feature Coverage Matrix
+Phase	Practical features delivered	Wow features unlocked	Design deliverables
+1 Discovery	—	—	Persona + problem statement
+2 Data	#7, #8	W5	Data dictionary
+3 Engine	#1, #2, #3, #4	W3, W6	Engine architecture
+4 ML	#5	W4, W10	Model card
+5 App	#6, #9, #10	W1, W2, W7, W8, W9	Clay Design System + Component Library + 3D Dioramas
+6 Docs/Deploy	—	—	Design System doc + API docs
+Clay Design System Quick Reference
+Color Tokens:
+
+
+Primary: #A8D5BA (soft sage)
+Secondary: #D4A574 (warm tan)
+Accent: #F4E4A6 (pale gold)
+Background: #F5F1E8 (off-white)
+Risk: #E8A89B (muted coral)
+Shadow Recipe (Clay Effect):
+
+
+Soft: 0 4px 12px rgba(0, 0, 0, 0.08)
+Depth: 0 8px 24px rgba(0, 0, 0, 0.12)
+Pressed: inset 0 2px 4px rgba(0, 0, 0, 0.1)
+Animation Easing:
+
+
+Squish: cubic-bezier(0.34, 1.56, 0.64, 1) @ 100ms
+Morph: cubic-bezier(0.34, 1.56, 0.64, 1) @ 200ms
+Transition: cubic-bezier(0.34, 1.56, 0.64, 1) @ 300ms
+MVP for Hackathon Submission
+Phases 1–3 + Practical Features #1–#5 (covering all 8 pilot crops) + Clay Design System + W1 (Digital Twin Diorama)
+
+This combination delivers:
+
+Core simulation engine working end-to-end across 8 major Indian crops
+Beautiful, tactile UI that judges will want to interact with
+One impressive 3D element (farm diorama) that demonstrates technical depth
+All data-driven predictions visible and understandable
+Broad appeal across India's major agro-climatic zones (cereals, pulses, oilseeds, cash crops, fibre)
+Optional add-ons (if time permits):
+
+Stretch to 10 crops by adding mustard, bajra, and jowar
+W2 (Voice Assistant) — high-impact, moderate effort
+W3 (Climate Stress Test) — high-impact, moderate effort
+Multi-language support (#9) — moderate effort, great for inclusivity story

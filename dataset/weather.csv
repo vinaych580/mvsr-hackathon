@@ -1,0 +1,4 @@
+region_id,season,year,rainfall_mm,avg_temp_c,min_temp_c,max_temp_c
+telangana_medak,kharif,2024,690,28.2,23.0,34.8
+mp_sehore,kharif,2024,840,27.0,22.1,33.2
+punjab_ludhiana,rabi,2024,120,16.8,8.2,24.4
