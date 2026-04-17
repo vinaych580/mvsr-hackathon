@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AgriSim - Strategy Comparison</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .clay-shadow {
+            box-shadow: 0 12px 32px rgba(47, 105, 79, 0.08);
+        }
+        .glass-header {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-surface": "#31302b",
+                        "surface-variant": "#e6e2d9",
+                        "tertiary": "#695e2d",
+                        "surface-container": "#f1eee5",
+                        "surface-container-high": "#ece8df",
+                        "secondary": "#7c572d",
+                        "primary-fixed-dim": "#98d3b3",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed": "#2c1700",
+                        "surface-container-highest": "#e6e2d9",
+                        "on-error": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "outline": "#717973",
+                        "tertiary-fixed-dim": "#d5c68b",
+                        "on-tertiary-fixed-variant": "#514718",
+                        "surface": "#fdf9f0",
+                        "on-background": "#1c1c16",
+                        "error": "#ba1a1a",
+                        "inverse-on-surface": "#f4f0e7",
+                        "surface-container-low": "#f7f3ea",
+                        "on-secondary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed": "#f2e2a5",
+                        "on-secondary-container": "#79542a",
+                        "secondary-fixed": "#ffdcbc",
+                        "secondary-fixed-dim": "#efbd8a",
+                        "on-surface": "#1c1c16",
+                        "on-secondary-fixed-variant": "#614018",
+                        "inverse-primary": "#98d3b3",
+                        "surface-bright": "#fdf9f0",
+                        "background": "#fdf9f0",
+                        "on-primary-fixed": "#002113",
+                        "primary": "#2f694f",
+                        "on-tertiary-fixed": "#211b00",
+                        "on-primary-fixed-variant": "#135038",
+                        "secondary-container": "#fecb97",
+                        "primary-container": "#9cd8b7",
+                        "tertiary-container": "#dacb8f",
+                        "on-surface-variant": "#414943",
+                        "error-container": "#ffdad6",
+                        "surface-tint": "#2f694f",
+                        "surface-dim": "#dddad1",
+                        "on-tertiary-container": "#605525",
+                        "primary-fixed": "#b3f0ce",
+                        "outline-variant": "#c1c8c1",
+                        "on-primary-container": "#255f46"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-[#f5f1e8] font-body text-on-surface min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<nav class="fixed top-0 w-full z-50 bg-[#fdf9f0]/80 backdrop-blur-xl shadow-[0_12px_32px_rgba(47,105,79,0.08)] flex justify-between items-center px-8 h-16 w-full">
+<div class="text-2xl font-bold tracking-tight text-[#2f694f]">AgriSim 🌾</div>
+<div class="hidden md:flex items-center gap-8 font-headline font-medium">
+<a class="text-[#2f694f] dark:text-[#9cd8b7] border-b-2 border-[#2f694f] pb-1 transition-colors" href="#">Simulations</a>
+<a class="text-[#2f694f]/60 hover:text-[#2f694f] transition-colors" href="#">Analytics</a>
+<a class="text-[#2f694f]/60 hover:text-[#2f694f] transition-colors" href="#">Library</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-[#2f694f] active:scale-95 duration-200">notifications</button>
+<button class="material-symbols-outlined text-[#2f694f] active:scale-95 duration-200">settings</button>
+<img alt="User profile" class="w-10 h-10 rounded-full border-2 border-primary-container" data-alt="Close up portrait of a middle-aged male farmer smiling in front of a sunlit field, warm lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCX2AGwxuIujHthS6BjrFe1cwTNuk002CFRKIwLP9teEI5KwpROB2ObmaKd-I7B34bXYFS_7WC0wJ9y7bBJOHIfL_wY9E7Rl5EoS8ssIvBlCsXJXVqFvTH9fpPNeqAqgurd09GOh13xQJKuq8wU2NR92u46_zzX1GNPCCZh4eXpisLYh38nDvge8kPF0NGpy42CUo5DWWbqzUY_sL6Q9yBfLJ03xEkUm-8qQT7ObkrZThK0DoodnhqObeaEljDXc2buWkTfkmSbP3Y"/>
+</div>
+</nav>
+<main class="pt-24 pb-12 px-8 max-w-7xl mx-auto w-full">
+<!-- Header Section -->
+<header class="mb-12">
+<h1 class="text-5xl font-headline font-extrabold text-primary mb-2 tracking-tight">Compare Strategies</h1>
+<p class="text-lg text-on-surface-variant font-medium">See how different farming approaches stack up</p>
+</header>
+<!-- Highlights Row -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+<div class="bg-surface-container-low p-6 rounded-xl clay-shadow border-l-4 border-primary flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined" data-icon="trending_up">trending_up</span>
+</div>
+<div>
+<p class="text-xs font-label uppercase tracking-widest text-on-surface-variant">Best Profit</p>
+<p class="text-xl font-headline font-bold text-primary">Strategy B</p>
+</div>
+</div>
+<div class="bg-surface-container-low p-6 rounded-xl clay-shadow border-l-4 border-tertiary flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-tertiary-container flex items-center justify-center text-on-tertiary-container">
+<span class="material-symbols-outlined" data-icon="verified_user">verified_user</span>
+</div>
+<div>
+<p class="text-xs font-label uppercase tracking-widest text-on-surface-variant">Lowest Risk</p>
+<p class="text-xl font-headline font-bold text-tertiary">Strategy C</p>
+</div>
+</div>
+<div class="bg-surface-container-low p-6 rounded-xl clay-shadow border-l-4 border-secondary flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined" data-icon="stars">stars</span>
+</div>
+<div>
+<p class="text-xs font-label uppercase tracking-widest text-on-surface-variant">Best ROI</p>
+<p class="text-xl font-headline font-bold text-secondary">Strategy B</p>
+</div>
+</div>
+</div>
+<!-- Strategy Cards Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16 items-stretch">
+<!-- Strategy 1 -->
+<div class="bg-surface-container-lowest rounded-xl clay-shadow p-8 flex flex-col border-t-8 border-primary-container">
+<div class="flex justify-between items-start mb-8">
+<div>
+<h3 class="text-2xl font-headline font-bold text-primary">Rice — Standard</h3>
+<p class="text-on-surface-variant text-sm">Monsoon Cycle Cycle Alpha</p>
+</div>
+<span class="material-symbols-outlined text-4xl text-primary" data-icon="grass">grass</span>
+</div>
+<div class="space-y-6 flex-grow">
+<div class="flex justify-between items-end border-b border-surface-container pb-2">
+<span class="text-on-surface-variant font-medium">Yield</span>
+<span class="text-xl font-bold font-headline">1,150 <span class="text-xs font-normal">kg/acre</span></span>
+</div>
+<div class="flex justify-between items-end border-b border-surface-container pb-2">
+<span class="text-on-surface-variant font-medium">Cost</span>
+<span class="text-xl font-bold font-headline">₹19,500</span>
+</div>
+<div class="flex justify-between items-end border-b border-surface-container pb-2">
+<span class="text-on-surface-variant font-medium">Net Profit</span>
+<span class="text-xl font-bold font-headline text-primary">₹18,500</span>
+</div>
+<div class="flex justify-between items-end border-b border-surface-container pb-2">
+<span class="text-on-surface-variant font-medium">ROI</span>
+<span class="text-xl font-bold font-headline text-primary">42%</span>
+</div>
+</div>
+<div class="mt-10">
+<div class="flex justify-between text-xs font-bold mb-2">
+<span class="text-on-surface-variant uppercase tracking-widest">Risk Level</span>
+<span class="text-on-surface">38/100</span>
+</div>
+<div class="h-3 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-yellow-500 w-[38%] rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- Strategy 2 -->
+<div class="bg-surface-container-lowest rounded-xl clay-shadow p-8 flex flex-col border-t-8 border-secondary-container scale-105 z-10 relative">
+<div class="absolute -top-4 right-8 bg-primary text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">Recommended</div>
+<div class="flex justify-between items-start mb-8">
+<div>
+<h3 class="text-2xl font-headline font-bold text-secondary">Cotton — Optimized</h3>
+<p class="text-on-surface-variant text-sm">Dry Season Precision A</p>
+</div>
+<span class="material-symbols-outlined text-4xl text-secondary" data-icon="eco">eco</span>
+</div>
+<div class="space-y-6 flex-grow">
+<div class="flex justify-between items-end border-b border-surface-container pb-2">
+<span class="text-on-surface-variant font-medium">Yield</span>
+<span class="text-xl font-bold font-headline">420 <span class="text-xs font-normal">kg/acre</span></span>
+</div>
+<div class="flex justify-between items-end border-b border-surface-container pb-2">
+<span class="text-on-surface-variant font-medium">Cost</span>
+<span class="text-xl font-bold font-headline">₹22,000</span>
+</div>
+<div class="flex justify-between items-end border-b border-surface-container pb-2">
+<span class="text-on-surface-variant font-medium">Net Profit</span>
+<span class="text-xl font-bold font-headline text-secondary">₹28,400</span>
+</div>
+<div class="flex justify-between items-end border-b border-surface-container pb-2">
+<span class="text-on-surface-variant font-medium">ROI</span>
+<span class="text-xl font-bold font-headline text-secondary">56%</span>
+</div>
+</div>
+<div class="mt-10">
+<div class="flex justify-between text-xs font-bold mb-2">
+<span class="text-on-surface-variant uppercase tracking-widest">Risk Level</span>
+<span class="text-on-surface">52/100</span>
+</div>
+<div class="h-3 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-orange-500 w-[52%] rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- Strategy 3 -->
+<div class="bg-surface-container-lowest rounded-xl clay-shadow p-8 flex flex-col border-t-8 border-tertiary-container">
+<div class="flex justify-between items-start mb-8">
+<div>
+<h3 class="text-2xl font-headline font-bold text-tertiary">Soybean — Low Risk</h3>
+<p class="text-on-surface-variant text-sm">Balanced Nutrient Plan</p>
+</div>
+<span class="material-symbols-outlined text-4xl text-tertiary" data-icon="psychology">psychology</span>
+</div>
+<div class="space-y-6 flex-grow">
+<div class="flex justify-between items-end border-b border-surface-container pb-2">
+<span class="text-on-surface-variant font-medium">Yield</span>
+<span class="text-xl font-bold font-headline">520 <span class="text-xs font-normal">kg/acre</span></span>
+</div>
+<div class="flex justify-between items-end border-b border-surface-container pb-2">
+<span class="text-on-surface-variant font-medium">Cost</span>
+<span class="text-xl font-bold font-headline">₹12,000</span>
+</div>
+<div class="flex justify-between items-end border-b border-surface-container pb-2">
+<span class="text-on-surface-variant font-medium">Net Profit</span>
+<span class="text-xl font-bold font-headline text-tertiary">₹11,400</span>
+</div>
+<div class="flex justify-between items-end border-b border-surface-container pb-2">
+<span class="text-on-surface-variant font-medium">ROI</span>
+<span class="text-xl font-bold font-headline text-tertiary">39%</span>
+</div>
+</div>
+<div class="mt-10">
+<div class="flex justify-between text-xs font-bold mb-2">
+<span class="text-on-surface-variant uppercase tracking-widest">Risk Level</span>
+<span class="text-on-surface">22/100</span>
+</div>
+<div class="h-3 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-green-600 w-[22%] rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Charts Section -->
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+<div class="bg-surface-container-low p-8 rounded-xl clay-shadow">
+<h4 class="text-xl font-headline font-bold text-primary mb-8 flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="bar_chart">bar_chart</span>
+                    Financial Comparison
+                </h4>
+<div class="flex items-end gap-4 h-64 w-full">
+<!-- Placeholder for Bar Chart using divs -->
+<div class="flex-1 flex flex-col gap-2 h-full justify-end">
+<div class="flex gap-1 items-end h-full">
+<div class="w-1/4 bg-primary-container rounded-t-lg" style="height: 60%;"></div>
+<div class="w-1/4 bg-secondary-container rounded-t-lg" style="height: 90%;"></div>
+<div class="w-1/4 bg-tertiary-container rounded-t-lg" style="height: 40%;"></div>
+</div>
+<p class="text-[10px] text-center font-bold uppercase text-on-surface-variant">Profit</p>
+</div>
+<div class="flex-1 flex flex-col gap-2 h-full justify-end">
+<div class="flex gap-1 items-end h-full">
+<div class="w-1/4 bg-primary-container rounded-t-lg" style="height: 70%;"></div>
+<div class="w-1/4 bg-secondary-container rounded-t-lg" style="height: 80%;"></div>
+<div class="w-1/4 bg-tertiary-container rounded-t-lg" style="height: 50%;"></div>
+</div>
+<p class="text-[10px] text-center font-bold uppercase text-on-surface-variant">Cost</p>
+</div>
+<div class="flex-1 flex flex-col gap-2 h-full justify-end">
+<div class="flex gap-1 items-end h-full">
+<div class="w-1/4 bg-primary-container rounded-t-lg" style="height: 40%;"></div>
+<div class="w-1/4 bg-secondary-container rounded-t-lg" style="height: 30%;"></div>
+<div class="w-1/4 bg-tertiary-container rounded-t-lg" style="height: 45%;"></div>
+</div>
+<p class="text-[10px] text-center font-bold uppercase text-on-surface-variant">Revenue</p>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-low p-8 rounded-xl clay-shadow relative overflow-hidden">
+<h4 class="text-xl font-headline font-bold text-primary mb-8 flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="radar">radar</span>
+                    Risk Analysis Index
+                </h4>
+<div class="relative h-64 w-full flex items-center justify-center">
+<!-- Abstract Radar Visualization -->
+<div class="w-48 h-48 border-2 border-outline-variant/30 rounded-full flex items-center justify-center">
+<div class="w-32 h-32 border-2 border-outline-variant/30 rounded-full flex items-center justify-center">
+<div class="w-16 h-16 border-2 border-outline-variant/30 rounded-full"></div>
+</div>
+</div>
+<div class="absolute inset-0 flex items-center justify-center">
+<svg class="w-48 h-48 drop-shadow-lg" viewbox="0 0 100 100">
+<polygon fill="rgba(47, 105, 79, 0.2)" points="50,10 80,40 70,80 30,80 20,40" stroke="#2f694f" stroke-width="2"></polygon>
+<circle cx="50" cy="10" fill="#2f694f" r="3"></circle>
+<circle cx="80" cy="40" fill="#2f694f" r="3"></circle>
+<circle cx="70" cy="80" fill="#2f694f" r="3"></circle>
+<circle cx="30" cy="80" fill="#2f694f" r="3"></circle>
+<circle cx="20" cy="40" fill="#2f694f" r="3"></circle>
+</svg>
+</div>
+</div>
+<div class="flex justify-center gap-4 mt-4">
+<span class="text-[10px] font-bold text-on-surface-variant">Market</span>
+<span class="text-[10px] font-bold text-on-surface-variant">Weather</span>
+<span class="text-[10px] font-bold text-on-surface-variant">Soil</span>
+<span class="text-[10px] font-bold text-on-surface-variant">Capital</span>
+</div>
+</div>
+</section>
+<!-- Action Buttons Section -->
+<footer class="flex flex-col md:flex-row gap-4 items-center justify-center py-8">
+<button class="w-full md:w-auto px-8 py-4 bg-surface-container-highest text-secondary font-bold rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+                Add Another Strategy
+            </button>
+<button class="w-full md:w-auto px-8 py-4 bg-surface-container-highest text-secondary font-bold rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="picture_as_pdf">picture_as_pdf</span>
+                Export Comparison PDF
+            </button>
+<button class="w-full md:w-auto px-10 py-4 bg-gradient-to-br from-primary to-primary-container text-white font-bold rounded-xl flex items-center justify-center gap-3 active:scale-95 transition-all shadow-lg hover:shadow-primary/20">
+<span class="material-symbols-outlined" data-icon="smart_toy" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+                Get AI Recommendation
+            </button>
+</footer>
+</main>
+<!-- Footer Shared Component -->
+<footer class="w-full py-8 px-8 mt-auto flex justify-between items-center bg-[#fdf9f0] border-t-0 text-sm font-['Plus_Jakarta_Sans']">
+<div class="font-bold text-[#2f694f]">© 2024 The Tactile Harvest. All Rights Reserved.</div>
+<div class="flex gap-8 text-[#2f694f]/50">
+<a class="hover:text-[#2f694f] underline decoration-2 transition-opacity" href="#">Privacy Policy</a>
+<a class="hover:text-[#2f694f] underline decoration-2 transition-opacity" href="#">Terms of Service</a>
+<a class="hover:text-[#2f694f] underline decoration-2 transition-opacity" href="#">Documentation</a>
+</div>
+</footer>
+</body></html>

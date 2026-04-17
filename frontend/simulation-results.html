@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AgriSim | Simulation Results</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error-container": "#ffdad6",
+                        "surface-container-high": "#ece8df",
+                        "surface-container-low": "#f7f3ea",
+                        "primary-fixed": "#b3f0ce",
+                        "on-primary-container": "#255f46",
+                        "primary-fixed-dim": "#98d3b3",
+                        "surface-dim": "#dddad1",
+                        "on-tertiary-container": "#605525",
+                        "on-secondary": "#ffffff",
+                        "surface-container-highest": "#e6e2d9",
+                        "on-tertiary-fixed-variant": "#514718",
+                        "surface": "#fdf9f0",
+                        "inverse-surface": "#31302b",
+                        "error": "#ba1a1a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed-variant": "#135038",
+                        "surface-bright": "#fdf9f0",
+                        "outline-variant": "#c1c8c1",
+                        "surface-variant": "#e6e2d9",
+                        "surface-container": "#f1eee5",
+                        "on-error": "#ffffff",
+                        "secondary-fixed-dim": "#efbd8a",
+                        "secondary-container": "#fecb97",
+                        "background": "#fdf9f0",
+                        "tertiary-fixed-dim": "#d5c68b",
+                        "surface-tint": "#2f694f",
+                        "primary": "#2f694f",
+                        "on-surface": "#1c1c16",
+                        "outline": "#717973",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed-variant": "#614018",
+                        "tertiary": "#695e2d",
+                        "on-surface-variant": "#414943",
+                        "on-secondary-container": "#79542a",
+                        "inverse-primary": "#98d3b3",
+                        "secondary-fixed": "#ffdcbc",
+                        "on-tertiary-fixed": "#211b00",
+                        "tertiary-container": "#dacb8f",
+                        "primary-container": "#9cd8b7",
+                        "on-background": "#1c1c16",
+                        "on-primary-fixed": "#002113",
+                        "secondary": "#7c572d",
+                        "on-secondary-fixed": "#2c1700",
+                        "inverse-on-surface": "#f4f0e7",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed": "#f2e2a5",
+                        "on-primary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Poppins", "Plus Jakarta Sans"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #fdf9f0; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .clay-shadow { box-shadow: 0 12px 32px rgba(47, 105, 79, 0.08); }
+        .bg-greenhouse { background: radial-gradient(circle at top right, #b3f0ce33, transparent); }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col bg-greenhouse">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-[#fdf9f0]/80 dark:bg-stone-900/80 backdrop-blur-md shadow-[0_12px_32px_rgba(47,105,79,0.08)]">
+<div class="flex justify-between items-center px-8 py-4 max-w-screen-2xl mx-auto">
+<div class="text-2xl font-bold text-[#2f694f] dark:text-[#9cd8b7] tracking-tighter font-['Plus_Jakarta_Sans']">AgriSim 🌾</div>
+<div class="hidden md:flex items-center gap-8 font-['Plus_Jakarta_Sans'] font-medium text-sm tracking-tight">
+<a class="text-stone-500 dark:text-stone-400 hover:text-[#2f694f] transition-colors" href="#">Home</a>
+<a class="text-[#2f694f] dark:text-[#9cd8b7] font-bold border-b-2 border-[#2f694f] pb-1" href="#">Simulate</a>
+<a class="text-stone-500 dark:text-stone-400 hover:text-[#2f694f] transition-colors" href="#">Market</a>
+<a class="text-stone-500 dark:text-stone-400 hover:text-[#2f694f] transition-colors" href="#">Community</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-[#2f694f] hover:bg-[#9cd8b7]/10 rounded-lg transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-[#2f694f] hover:bg-[#9cd8b7]/10 rounded-lg transition-colors">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</div>
+</nav>
+<main class="mt-24 px-8 max-w-screen-2xl mx-auto w-full pb-20">
+<!-- Header Section -->
+<header class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<a class="flex items-center gap-2 text-primary font-semibold text-sm mb-4 group" href="#">
+<span class="material-symbols-outlined text-sm group-hover:-translate-x-1 transition-transform">arrow_back</span>
+                    Back to Strategy
+                </a>
+<h1 class="text-4xl md:text-5xl font-headline font-bold text-primary tracking-tight">Simulation Results</h1>
+<p class="text-on-surface-variant font-body mt-2">Rice (Paddy) — Kharif 2024 — Telangana</p>
+</div>
+<div class="flex gap-3">
+<button class="px-6 py-3 bg-primary text-white font-semibold rounded-xl clay-shadow hover:scale-95 transition-transform flex items-center gap-2">
+                    Compare Strategies
+                </button>
+</div>
+</header>
+<!-- Top Row: Key Metrics -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+<div class="bg-primary-container p-8 rounded-xl clay-shadow flex flex-col justify-between aspect-square lg:aspect-auto">
+<span class="text-on-primary-container font-label uppercase tracking-widest text-xs font-bold">Predicted Yield</span>
+<div class="mt-4">
+<h2 class="text-4xl font-headline font-extrabold text-on-primary-container">1,150</h2>
+<span class="text-on-primary-container/80 text-sm">kg/acre</span>
+</div>
+<div class="mt-4 flex items-center gap-1 text-on-primary-container">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span class="text-xs font-semibold">+12% vs last year</span>
+</div>
+</div>
+<div class="bg-tertiary-container p-8 rounded-xl clay-shadow flex flex-col justify-between">
+<span class="text-on-tertiary-container font-label uppercase tracking-widest text-xs font-bold">Net Profit</span>
+<div class="mt-4">
+<h2 class="text-4xl font-headline font-extrabold text-on-tertiary-container">₹18,500</h2>
+<span class="text-on-tertiary-container/80 text-sm">per acre</span>
+</div>
+<div class="mt-4 flex items-center gap-1 text-on-tertiary-container">
+<span class="material-symbols-outlined text-sm">payments</span>
+<span class="text-xs font-semibold">High confidence</span>
+</div>
+</div>
+<div class="bg-surface-container-high p-8 rounded-xl clay-shadow flex flex-col justify-between">
+<span class="text-on-surface-variant font-label uppercase tracking-widest text-xs font-bold">ROI</span>
+<div class="mt-4">
+<h2 class="text-4xl font-headline font-extrabold text-primary">42%</h2>
+<span class="text-on-surface-variant text-sm">Estimated return</span>
+</div>
+<div class="mt-4 h-2 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[42%] rounded-full"></div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-8 rounded-xl clay-shadow flex items-center justify-center relative">
+<div class="text-center">
+<div class="relative inline-flex items-center justify-center">
+<svg class="w-24 h-24">
+<circle class="text-surface-container-highest" cx="48" cy="48" fill="transparent" r="40" stroke="currentColor" stroke-width="8"></circle>
+<circle class="text-secondary" cx="48" cy="48" fill="transparent" r="40" stroke="currentColor" stroke-dasharray="251" stroke-dashoffset="155" stroke-linecap="round" stroke-width="8"></circle>
+</svg>
+<span class="absolute text-2xl font-bold text-on-surface">38</span>
+</div>
+<p class="mt-2 text-xs font-bold uppercase tracking-tighter text-on-surface-variant">Risk Score</p>
+<p class="text-[10px] text-secondary font-semibold">LOW-MEDIUM</p>
+</div>
+</div>
+</div>
+<!-- Middle Row: Breakdown Sections -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-10">
+<!-- Cost Breakdown -->
+<section class="bg-surface-container-low p-8 rounded-xl">
+<div class="flex justify-between items-center mb-8">
+<h3 class="text-xl font-headline font-bold text-primary">Cost Breakdown</h3>
+<div class="bg-primary text-white px-4 py-1 rounded-full text-sm font-bold">Total: ₹19,500/acre</div>
+</div>
+<div class="space-y-3">
+<div class="flex justify-between items-center p-4 bg-surface-container-lowest rounded-xl">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-primary-container/30 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">eco</span>
+</div>
+<span class="font-medium text-on-surface">Seeds</span>
+</div>
+<span class="font-bold text-on-surface">₹2,800</span>
+</div>
+<div class="flex justify-between items-center p-4 bg-surface-container-lowest rounded-xl">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-primary-container/30 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">compost</span>
+</div>
+<span class="font-medium text-on-surface">Fertilizer</span>
+</div>
+<span class="font-bold text-on-surface">₹5,200</span>
+</div>
+<div class="flex justify-between items-center p-4 bg-surface-container-lowest rounded-xl">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-primary-container/30 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">groups</span>
+</div>
+<span class="font-medium text-on-surface">Labour</span>
+</div>
+<span class="font-bold text-on-surface">₹4,000</span>
+</div>
+<div class="flex justify-between items-center p-4 bg-surface-container-lowest rounded-xl">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-primary-container/30 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">water_drop</span>
+</div>
+<span class="font-medium text-on-surface">Irrigation</span>
+</div>
+<span class="font-bold text-on-surface">₹2,500</span>
+</div>
+<div class="flex justify-between items-center p-4 bg-surface-container-lowest rounded-xl">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-primary-container/30 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">science</span>
+</div>
+<span class="font-medium text-on-surface">Pesticide</span>
+</div>
+<span class="font-bold text-on-surface">₹1,800</span>
+</div>
+</div>
+</section>
+<!-- Risk Score Breakdown -->
+<section class="bg-surface-container-low p-8 rounded-xl">
+<h3 class="text-xl font-headline font-bold text-primary mb-8">Risk Factors</h3>
+<div class="space-y-8">
+<div>
+<div class="flex justify-between text-sm mb-2">
+<span class="font-semibold text-on-surface">Drought Risk</span>
+<span class="text-on-surface-variant">25/100</span>
+</div>
+<div class="h-2 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-[#9cd8b7] w-[25%] rounded-full"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-sm mb-2">
+<span class="font-semibold text-on-surface">Pest Infestation</span>
+<span class="text-on-surface-variant">45/100</span>
+</div>
+<div class="h-2 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-[#efbd8a] w-[45%] rounded-full"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-sm mb-2">
+<span class="font-semibold text-on-surface">Flood Potential</span>
+<span class="text-on-surface-variant">15/100</span>
+</div>
+<div class="h-2 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-[#b3f0ce] w-[15%] rounded-full"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-sm mb-2">
+<span class="font-semibold text-on-surface">Price Volatility</span>
+<span class="text-on-surface-variant">55/100</span>
+</div>
+<div class="h-2 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-[#7c572d] w-[55%] rounded-full"></div>
+</div>
+</div>
+</div>
+<div class="mt-10 p-4 border border-outline-variant/20 rounded-xl bg-surface-container-lowest/50 flex items-start gap-3">
+<span class="material-symbols-outlined text-secondary">info</span>
+<p class="text-xs text-on-surface-variant leading-relaxed">Risk scores are calculated based on 10-year historical weather patterns and current market trends in the Telangana region.</p>
+</div>
+</section>
+</div>
+<!-- Bottom Row: Charts & Visualization -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-12">
+<div class="bg-surface-container-lowest p-8 rounded-xl clay-shadow">
+<h3 class="text-lg font-headline font-bold text-primary mb-6">Yield Trend (Last 5 Years)</h3>
+<div class="h-64 flex items-end justify-between gap-2 px-2">
+<div class="w-full flex flex-col items-center gap-2">
+<div class="w-full bg-surface-container-high rounded-t-lg transition-all hover:bg-primary-container" style="height: 60%;"></div>
+<span class="text-[10px] font-bold text-on-surface-variant">2019</span>
+</div>
+<div class="w-full flex flex-col items-center gap-2">
+<div class="w-full bg-surface-container-high rounded-t-lg transition-all hover:bg-primary-container" style="height: 45%;"></div>
+<span class="text-[10px] font-bold text-on-surface-variant">2020</span>
+</div>
+<div class="w-full flex flex-col items-center gap-2">
+<div class="w-full bg-surface-container-high rounded-t-lg transition-all hover:bg-primary-container" style="height: 85%;"></div>
+<span class="text-[10px] font-bold text-on-surface-variant">2021</span>
+</div>
+<div class="w-full flex flex-col items-center gap-2">
+<div class="w-full bg-surface-container-high rounded-t-lg transition-all hover:bg-primary-container" style="height: 70%;"></div>
+<span class="text-[10px] font-bold text-on-surface-variant">2022</span>
+</div>
+<div class="w-full flex flex-col items-center gap-2">
+<div class="w-full bg-primary rounded-t-lg shadow-lg" style="height: 92%;"></div>
+<span class="text-[10px] font-bold text-primary">2023</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-8 rounded-xl clay-shadow relative overflow-hidden">
+<h3 class="text-lg font-headline font-bold text-primary mb-6">Cost Distribution</h3>
+<div class="flex items-center justify-around h-64">
+<div class="relative w-40 h-40">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
+<circle cx="18" cy="18" fill="transparent" r="15.915" stroke="#f1eee5" stroke-width="4"></circle>
+<circle cx="18" cy="18" fill="transparent" r="15.915" stroke="#2f694f" stroke-dasharray="40 60" stroke-width="4"></circle>
+<circle cx="18" cy="18" fill="transparent" r="15.915" stroke="#7c572d" stroke-dasharray="25 75" stroke-dashoffset="-40" stroke-width="4"></circle>
+<circle cx="18" cy="18" fill="transparent" r="15.915" stroke="#dacb8f" stroke-dasharray="35 65" stroke-dashoffset="-65" stroke-width="4"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-xs font-bold text-on-surface-variant">TOTAL</span>
+<span class="text-lg font-bold text-primary">100%</span>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex items-center gap-3 text-xs font-semibold">
+<div class="w-3 h-3 rounded-full bg-primary"></div>
+<span>Inputs (40%)</span>
+</div>
+<div class="flex items-center gap-3 text-xs font-semibold">
+<div class="w-3 h-3 rounded-full bg-secondary"></div>
+<span>Labour (25%)</span>
+</div>
+<div class="flex items-center gap-3 text-xs font-semibold">
+<div class="w-3 h-3 rounded-full bg-tertiary-container"></div>
+<span>Ops (35%)</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Bar -->
+<div class="flex flex-wrap items-center justify-center md:justify-start gap-4">
+<button class="px-8 py-4 bg-primary text-white font-bold rounded-xl clay-shadow hover:scale-95 transition-all">
+                Get Crop Recommendation
+            </button>
+<button class="px-8 py-4 bg-surface-container-high text-primary font-bold rounded-xl flex items-center gap-2 hover:bg-surface-container-highest transition-all">
+<span class="material-symbols-outlined">picture_as_pdf</span>
+                Export PDF Report
+            </button>
+<button class="px-8 py-4 bg-surface-container-high text-primary font-bold rounded-xl flex items-center gap-2 hover:bg-surface-container-highest transition-all">
+<span class="material-symbols-outlined">share</span>
+                Share Simulation
+            </button>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full mt-auto py-12 px-8 bg-[#fdf9f0] dark:bg-stone-950 border-t border-[#2f694f]/10">
+<div class="flex flex-col md:flex-row justify-between items-center gap-6 max-w-screen-2xl mx-auto">
+<div class="text-lg font-black text-[#2f694f] dark:text-[#9cd8b7]">AgriSim 🌾</div>
+<div class="flex gap-8 text-stone-400 font-['Plus_Jakarta_Sans'] text-xs uppercase tracking-widest">
+<a class="hover:text-[#7c572d] transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-[#7c572d] transition-colors" href="#">Terms of Service</a>
+<a class="hover:text-[#7c572d] transition-colors" href="#">Support</a>
+<a class="hover:text-[#7c572d] transition-colors" href="#">Documentation</a>
+</div>
+<div class="text-stone-400 font-['Plus_Jakarta_Sans'] text-xs uppercase tracking-widest">
+                © 2024 AgriSim. Cultivating Digital Ecosystems.
+            </div>
+</div>
+</footer>
+</body></html>
