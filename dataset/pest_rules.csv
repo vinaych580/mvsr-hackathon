@@ -1,0 +1,39 @@
+crop_id,pest_disease,trigger_temp_min_c,trigger_temp_max_c,trigger_rainfall_min_mm,trigger_humidity_hint,severity,description,management
+rice,Blast,22,30,800,high,high,Rice blast fungus thrives in warm humid conditions with heavy dew,Use blast-resistant varieties; apply Tricyclazole 75WP at 0.6g/L
+rice,Brown Plant Hopper,25,35,700,high,high,BPH outbreaks common in flooded paddies with high nitrogen,Avoid excess N fertilizer; alternate wetting-drying irrigation
+rice,Sheath Blight,25,32,600,high,medium,Rhizoctonia favors warm humid canopy with dense planting,Maintain wider spacing; apply Hexaconazole 5EC
+wheat,Yellow Rust,10,20,300,moderate,high,Stripe rust spores spread in cool wet conditions via wind,Apply Propiconazole 25EC at first symptom; use resistant varieties
+wheat,Aphids,15,25,200,low,medium,Wheat aphids spike in dry warm weather during ear-head stage,Spray Dimethoate 30EC at 1.5ml/L if >10 aphids per ear
+maize,Fall Armyworm,20,35,400,moderate,high,FAW larvae attack whorl stage maize in warm rainy conditions,Apply Emamectin Benzoate 5SG at 0.4g/L; early detection critical
+maize,Stem Borer,22,34,500,moderate,medium,Chilo partellus attacks stems during vegetative growth,Release Trichogramma egg parasitoids; dead-heart scouting
+cotton,Bollworm,25,38,400,moderate,high,Helicoverpa armigera causes heavy yield loss in fruiting stage,Install pheromone traps; spray Spinosad 45SC at critical windows
+cotton,Whitefly,28,40,300,low,high,Bemisia tabaci transmits leaf curl virus in hot dry spells,Yellow sticky traps; neem oil 0.3% spray; avoid excess nitrogen
+pulses,Pod Borer,22,32,350,moderate,high,Helicoverpa attacks flowering/podding stage chickpea and tur,NSKE 5% spray at 50% flowering; HaNPV bio-control
+pulses,Wilt,20,30,400,high,high,Fusarium wilt in chickpea favored by waterlogged soils,Use wilt-resistant varieties; avoid waterlogging; seed treatment with Trichoderma
+groundnut,Tikka Disease,24,32,500,high,medium,Cercospora leaf spot in warm humid weather reduces photosynthesis,Spray Mancozeb 75WP at 2.5g/L at 30-35 DAS and repeat at 15-day interval
+groundnut,White Grub,22,30,600,moderate,medium,Soil grubs damage pods in sandy soils after monsoon onset,Deep summer ploughing; Chlorpyrifos 20EC soil drench before sowing
+soybean,Girdle Beetle,24,34,500,moderate,medium,Obereopsis brevis girdles stems causing breakage in vegetative stage,Spray Thiamethoxam 25WG at 0.3g/L at 20-25 DAS
+soybean,Yellow Mosaic,25,35,400,moderate,high,Whitefly-transmitted virus causes yellowing and yield loss,Control whitefly vector; use resistant varieties (JS 335)
+sugarcane,Early Shoot Borer,28,38,600,moderate,high,Chilo infuscatellus kills growing points causing dead-hearts,Trash mulching; release Trichogramma; Chlorantraniliprole application
+sugarcane,Red Rot,25,35,800,high,high,Colletotrichum falcatum enters through borers in warm wet fields,Use disease-free setts; hot water treatment of seed cane at 54C for 30min
+tomato,Early Blight,22,30,500,high,high,Alternaria solani causes concentric leaf spots in warm humid weather,Rotate with non-solanaceous crops; spray Mancozeb 75WP at 2g/L
+tomato,Fruit Borer,24,34,400,moderate,high,Helicoverpa armigera bores into fruits causing rot,Install pheromone traps at 5/acre; spray Spinosad 45SC at 0.3ml/L
+chilli,Thrips,25,35,300,low,high,Scirtothrips dorsalis causes leaf curl and flower drop in dry weather,Spray Spinosad 45SC at 0.3ml/L; yellow/blue sticky traps
+chilli,Fruit Rot,22,32,600,high,high,Colletotrichum anthracnose causes dark sunken spots on ripe fruit,Copper oxychloride 3g/L; avoid overhead irrigation; resistant varieties
+turmeric,Rhizome Rot,25,32,800,high,high,Pythium aphanidermatum rots rhizomes in waterlogged fields,Well-drained beds; Trichoderma seed treatment; Metalaxyl drench
+ginger,Soft Rot,25,32,900,high,high,Pythium myriotylum causes yellowing and rhizome decay,Raised beds; Bordeaux mixture 1% drench; certified disease-free seed
+banana,Sigatoka Leaf Spot,24,32,900,high,high,Mycosphaerella fijiensis causes necrotic streaks reducing yield,Remove infected leaves; spray Propiconazole 25EC at 0.1%
+banana,Panama Wilt,25,32,700,moderate,high,Fusarium oxysporum f.sp. cubense blocks vascular system,Use TR4-resistant G9 variety; avoid replanting infected fields
+coconut,Rhinoceros Beetle,24,32,700,moderate,medium,Oryctes rhinoceros bores into crown causing V-cut leaves,Install pheromone traps; apply Carbaryl 10% granules in leaf axils
+coffee,White Stem Borer,18,28,500,moderate,high,Xylotrechus quadripes bores into arabica stems causing wilting,Trace and swab stems with Chlorpyrifos; prune infested plants in July
+tea,Red Spider Mite,20,30,400,low,medium,Oligonychus coffeae causes bronzing of mature leaves in dry spells,Spray Propargite 57EC at 2ml/L; maintain shade
+barley,Loose Smut,12,22,300,moderate,medium,Ustilago nuda replaces grain with black spore mass,Use certified seed; seed treatment with Carboxin + Thiram at 2g/kg
+ragi,Blast,22,30,500,high,medium,Pyricularia grisea causes diamond-shaped leaf lesions and neck rot,Resistant varieties (GPU-28); spray Tricyclazole 75WP at 0.6g/L
+sunflower,Necrosis Virus,25,33,400,moderate,high,Tobacco streak virus transmitted by thrips causes stunting,Control thrips vector; rogue infected plants; avoid sowing near sunflower crops
+moong,Yellow Mosaic,25,33,400,moderate,high,Whitefly-borne MYMV causes bright yellow patches reducing pods,Use resistant varieties (IPM 02-3); Imidacloprid seed treatment
+urad,Powdery Mildew,22,30,300,low,medium,Erysiphe polygoni coats leaves with white powder in dry weather,Spray Wettable Sulphur 0.3% or Hexaconazole 5EC 1ml/L
+arhar,Pod Fly,22,32,400,moderate,medium,Melanagromyza obtusa larvae feed inside pods damaging seeds,Spray Acephate 75SP at 1g/L at flowering; short-duration varieties
+potato,Late Blight,15,22,500,high,high,Phytophthora infestans devastates foliage in cool wet weather,Preventive Mancozeb 75WP 2g/L; curative Cymoxanil + Mancozeb at symptoms
+onion,Purple Blotch,22,30,400,high,medium,Alternaria porri causes purple lesions on leaves and bulbs,Spray Mancozeb 75WP at 2g/L; avoid overhead irrigation
+tomato,Leaf Curl Virus,28,38,200,low,high,Whitefly-transmitted begomovirus causes severe stunting and leaf curling,Control whitefly with yellow sticky traps + Imidacloprid; resistant hybrids
+mango,Hopper,25,35,200,low,high,Amritodus atkinsoni nymphs suck sap during flowering causing fruit drop,Spray Imidacloprid 17.8SL at 0.3ml/L at panicle emergence

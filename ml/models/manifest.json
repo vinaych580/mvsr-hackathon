@@ -1,0 +1,86 @@
+{
+  "models": [
+    {
+      "model": "yield_prediction",
+      "algorithm": "RandomForestRegressor",
+      "metrics": {
+        "mae": 358.08,
+        "rmse": 1001.36,
+        "r2": 0.9914,
+        "train_samples": 403,
+        "test_samples": 101
+      },
+      "feature_importances": {
+        "crop_enc": 0.0,
+        "region_enc": 0.0001,
+        "season_enc": 0.2029,
+        "base_yield": 0.1669,
+        "water_req": 0.1143,
+        "temp_min": 0.0002,
+        "temp_max": 0.0005,
+        "npk_n": 0.1887,
+        "npk_p": 0.1637,
+        "npk_k": 0.1594,
+        "soil_ph": 0.0004,
+        "soil_n": 0.0004,
+        "soil_p": 0.0009,
+        "soil_k": 0.0001,
+        "soil_oc": 0.0001,
+        "rainfall": 0.0001,
+        "avg_temp": 0.0003,
+        "min_temp": 0.0006,
+        "max_temp": 0.0003,
+        "irrigation": 0.0001
+      }
+    },
+    {
+      "model": "price_forecasting",
+      "algorithm": "GradientBoostingRegressor",
+      "metrics": {
+        "mae": 6.2,
+        "rmse": 8.55,
+        "r2": 0.8929,
+        "train_samples": 403,
+        "test_samples": 101
+      },
+      "feature_importances": {
+        "crop_enc": 0.0059,
+        "region_enc": 0.0018,
+        "month": 0.009,
+        "year_offset": 0.002,
+        "lag_1": 0.0804,
+        "lag_2": 0.2988,
+        "lag_3": 0.2103,
+        "rolling_mean_3": 0.3359,
+        "rolling_std_3": 0.0143,
+        "price_range": 0.0415
+      }
+    },
+    {
+      "model": "crop_recommendation",
+      "algorithm": "RandomForestClassifier",
+      "metrics": {
+        "accuracy": 0.9798,
+        "train_samples": 36000,
+        "test_samples": 9000,
+        "num_classes": 4
+      },
+      "feature_importances": {
+        "region_enc": 0.0359,
+        "season_enc": 0.5743,
+        "soil_ph": 0.0385,
+        "soil_n": 0.0324,
+        "soil_p": 0.0432,
+        "soil_k": 0.0502,
+        "soil_oc": 0.0034,
+        "rainfall": 0.0257,
+        "avg_temp": 0.0091,
+        "min_temp": 0.0095,
+        "max_temp": 0.0069,
+        "budget": 0.1496,
+        "irrigation": 0.0214
+      }
+    }
+  ],
+  "model_dir": "C:\\Users\\vinay\\PycharmProjects\\mvsr hackathon\\ml\\models"
+}

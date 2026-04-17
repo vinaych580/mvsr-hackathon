@@ -7,6 +7,8 @@ from pathlib import Path
 
 import requests
 
+from data_ingestion.cache import cached
+
 _DATASET_DIR = Path(__file__).resolve().parents[2] / "dataset"
 _FALLBACK_CSV = _DATASET_DIR / "weather.csv"
 
@@ -23,6 +25,7 @@ _REGION_COORDS: dict[str, tuple[float, float]] = {
 logger = logging.getLogger(__name__)
 
 
+@cached(ttl_seconds=3600, key="weather")  # 1-hour TTL
 def fetch_weather(
     lat: float, 
     lon: float, 

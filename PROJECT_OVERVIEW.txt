@@ -1,0 +1,460 @@
+================================================================================
+                AGRISIM - FARM INTELLIGENCE PLATFORM
+                     Complete Project Overview
+================================================================================
+
+
+1. TECH STACK
+================================================================================
+
+  Backend Framework     : FastAPI (Python) with Uvicorn ASGI server
+  Data Validation       : Pydantic v2 (request/response models with validators)
+  ML / AI               : scikit-learn 1.8.0
+                          - RandomForestRegressor   (yield prediction)
+                          - GradientBoostingRegressor (price forecasting)
+                          - RandomForestClassifier  (crop recommendation)
+  Numerical Computing   : NumPy 2.4.4
+  Model Serialization   : joblib (save/load .joblib model files)
+  Data Storage          : CSV flat files (9 datasets in /dataset/)
+  Frontend              : Vanilla HTML + JavaScript (no framework)
+  API Protocol          : REST (JSON over HTTP)
+  CORS                  : FastAPI CORSMiddleware (open for local dev)
+  Static File Serving   : FastAPI StaticFiles (frontend mounted at /)
+  Python Version        : 3.13+
+  Package Management    : pip + requirements.txt
+  Version Control       : Git
+
+
+2. PROJECT STRUCTURE
+================================================================================
+
+  mvsr hackathon/
+  |
+  |-- backend/
+  |   |-- main.py              # FastAPI app, all 32+ API endpoints, Pydantic models
+  |
+  |-- engine/
+  |   |-- simulator.py         # Core simulation engine (yield, cost, profit, risk,
+  |   |                          water efficiency, nutrient gap, sensitivity matrix)
+  |   |-- features.py          # 14 feature implementations (fertilizer, MSP, sell
+  |   |                          advisor, irrigation, crop calendar, pest alerts,
+  |   |                          loan calc, soil projection, price forecast,
+  |   |                          arbitrage, templates, benchmark, expenses, schemes)
+  |   |-- __init__.py
+  |
+  |-- ml/
+  |   |-- predict.py           # ML-backed prediction functions (yield, risk, profit,
+  |   |                          recommendations, price analytics, rotation planner)
+  |   |-- train_models.py      # Training pipeline for 3 ML models
+  |   |-- models/              # Serialized model files (.joblib)
+  |   |   |-- yield_model.joblib          (~2 MB, RandomForest)
+  |   |   |-- price_model.joblib          (~1.3 MB, GradientBoosting)
+  |   |   |-- recommend_model.joblib      (~10 MB, RandomForest)
+  |   |   |-- label_encoders.joblib       (LabelEncoders for yield model)
+  |   |   |-- price_encoders.joblib       (LabelEncoders for price model)
+  |   |   |-- recommend_encoders.joblib   (LabelEncoders for recommend model)
+  |   |   |-- manifest.json              (training metrics & feature importances)
+  |   |-- __init__.py
+  |
+  |-- utils/
+  |   |-- calculations.py      # Core math: soil factor, climate factor, yield
+  |                               estimation, risk scoring, CropParameter dataclass
+  |
+  |-- dataset/
+  |   |-- crop_parameters.csv  # 8 crops: base yield, NPK needs, costs, price ranges
+  |   |-- mandi_prices.csv     # ~580 rows: region x crop x date price history
+  |   |-- yield_history.csv    # ~72 rows: historical yields by region/crop/year
+  |   |-- soil.csv             # 3 regions: NPK, pH, organic carbon, soil type
+  |   |-- weather.csv          # 3 regions x seasons: rainfall, temp ranges
+  |   |-- msp_prices.csv       # MSP data for 8 crops (2024-2025)
+  |   |-- government_schemes.csv  # 12 government schemes with eligibility rules
+  |   |-- pest_rules.csv       # 18 pest/disease rules with weather triggers
+  |   |-- data_dictionary.md   # Column descriptions for all CSVs
+  |
+  |-- frontend/
+  |   |-- index.html           # Dashboard
+  |   |-- landing.html         # Landing page
+  |   |-- farm-setup.html      # Farm setup wizard
+  |   |-- strategy-builder.html     # Strategy builder
+  |   |-- strategy-comparison.html  # Compare strategies
+  |   |-- simulation-results.html   # Results display
+  |   |-- app.js               # Frontend logic (API calls, charts, forms)
+  |   |-- DESIGN.md
+  |
+  |-- data_ingestion/          # Data loading utilities
+  |-- docs/                    # Documentation
+  |-- requirements.txt         # Python dependencies
+  |-- PROJECT_OVERVIEW.txt     # This file
+
+
+3. ML MODELS - DETAILS
+================================================================================
+
+  3.1 Yield Prediction Model
+  --------------------------
+  Algorithm   : RandomForestRegressor (200 trees, max_depth=12)
+  Features    : crop_encoded, region_encoded, season_encoded, base_yield,
+                water_requirement, temp_min, temp_max, NPK requirements (N,P,K),
+                soil_pH, soil_N, soil_P, soil_K, organic_carbon,
+                rainfall, avg_temp, min_temp, max_temp, irrigation_level
+  Total features : 20
+  Training data  : 504 samples (72 real yield_history rows augmented 6x with
+                   +/-10% gaussian noise on numeric features)
+  Train/Test     : 80/20 split
+  Metrics        : R^2 = 0.9914, MAE = 358 kg/acre, RMSE = 1001 kg/acre
+  Top features   : season (20.3%), NPK_N (18.9%), base_yield (16.7%),
+                   NPK_P (16.4%), NPK_K (15.9%), water_req (11.4%)
+  Fallback       : If model unavailable, uses heuristic formula from
+                   utils/calculations.py (soil_factor * climate_factor * base_yield)
+                   adjusted by historical yield averages.
+
+  3.2 Price Forecasting Model
+  ---------------------------
+  Algorithm   : GradientBoostingRegressor (300 trees, lr=0.05, max_depth=6)
+  Features    : crop_encoded, region_encoded, month, year_offset,
+                lag_1, lag_2, lag_3 (past 3 price points),
+                rolling_mean_3, rolling_std_3, price_range
+  Total features : 10
+  Training data  : 504 samples (from ~580 mandi price rows, using sliding windows)
+  Train/Test     : 80/20 split
+  Metrics        : R^2 = 0.8929, MAE = Rs 6.2/kg, RMSE = Rs 8.55/kg
+  Top features   : rolling_mean_3 (33.6%), lag_2 (29.9%), lag_3 (21.0%),
+                   lag_1 (8.0%), price_range (4.2%)
+  Usage          : Iterative multi-step forecasting — each prediction is fed back
+                   as a lag feature for the next month's prediction.
+  Fallback       : Seasonal decomposition + linear trend extrapolation.
+
+  3.3 Crop Recommendation Model
+  -----------------------------
+  Algorithm   : RandomForestClassifier (200 trees, max_depth=10)
+  Features    : region_encoded, season_encoded, soil_pH, soil_N, soil_P,
+                soil_K, organic_carbon, rainfall, avg_temp, min_temp,
+                max_temp, budget, irrigation_level
+  Total features : 13
+  Training data  : 45,000 samples (synthetic grid: 3 regions x 2 seasons x
+                   5 budgets x 5 irrigation x 6 pH x 5 rainfall x 5 temp
+                   combinations, each labelled with best crop by multi-factor
+                   scoring, then 1x augmentation with noise)
+  Train/Test     : 80/20 stratified split
+  Metrics        : Accuracy = 97.98%, 4 crop classes
+  Top features   : season (57.4%), budget (15.0%), soil_K (5.0%), soil_P (4.3%),
+                   soil_pH (3.9%), region (3.6%), soil_N (3.2%)
+  Usage          : predict_proba gives per-crop confidence scores which are
+                   blended into the smart_score ranking (15% weight).
+  Fallback       : Heuristic scoring (ROI + risk + budget fit + soil health).
+
+
+4. HOW ML IS APPLIED (INTEGRATION FLOW)
+================================================================================
+
+  4.1 Yield Prediction
+      User calls /api/simulate or /api/recommend
+      -> predict_yield_kg_per_acre() in ml/predict.py
+      -> Tries ML model first: builds 20-feature vector, calls model.predict()
+      -> If ML unavailable or returns <=0: falls back to heuristic formula
+      -> Result is used in profit calculation, simulation output, and ranking
+
+  4.2 Price Forecasting
+      User calls /api/price-forecast/{region}/{crop}
+      -> price_forecast() in engine/features.py
+      -> For each future month: calls _ml_predict_price() with lag features
+      -> Predicted price is appended to rolling window for next step (autoregressive)
+      -> If ML unavailable: uses seasonal index * linear trend extrapolation
+      -> Response includes prediction_source field ("ml_model" or "heuristic")
+
+  4.3 Crop Recommendation
+      User calls /api/recommend or /api/crop-comparison
+      -> recommend_crops() in ml/predict.py
+      -> Calls _ml_recommend_crop() to get per-crop probability vector
+      -> ML confidence is blended into smart_score (15% weight on top of
+         ROI, risk, budget fit, and soil health scores)
+      -> Each crop entry includes ml_confidence and prediction_source fields
+
+  4.4 Model Retraining
+      User calls POST /api/ml/train
+      -> Runs train_all() from ml/train_models.py
+      -> Rebuilds all 3 models from current CSV data
+      -> Saves new .joblib files + updates manifest.json
+      -> Next request will load fresh models automatically
+
+
+5. COMPLETE FEATURE LIST (32+ API ENDPOINTS)
+================================================================================
+
+  ---- Core Simulation ----
+
+  5.1  Health Check                  GET  /api/health
+       Returns server status.
+
+  5.2  List All Crops                GET  /api/crops
+       Returns all 8 crop parameters from crop_parameters.csv.
+
+  5.3  Single Crop Details           GET  /api/crops/{crop_id}
+       Returns detailed parameters for one crop.
+
+  5.4  List Regions                  GET  /api/regions
+       Returns all 3 regions with soil type and weather summary.
+
+  5.5  Weather Data                  GET  /api/weather/{region_id}?season=kharif
+       Returns rainfall, temperature data for a region+season.
+
+  5.6  Soil Data                     GET  /api/soil/{region_id}
+       Returns NPK levels, pH, organic carbon, soil type.
+
+  5.7  Mandi Prices                  GET  /api/mandi-prices/{region_id}?crop_id=rice
+       Returns raw mandi price history for a region (optionally filtered by crop).
+
+  5.8  Yield History                 GET  /api/yield-history/{region_id}
+       Returns historical yield data by crop and year.
+
+  5.9  Full Simulation               POST /api/simulate
+       Accepts crop, area, soil, weather, input costs, irrigation.
+       Returns: yield, cost breakdown, profit, ROI, risk score, water efficiency,
+       nutrient gap analysis, sensitivity matrix (price x yield +-10/20%).
+       Uses ML yield model internally.
+
+  5.10 Compare Strategies            POST /api/compare-strategies
+       Accepts list of strategies, runs simulation on each, returns ranked results.
+
+  5.11 Smart Crop Recommendations    POST /api/recommend
+       ML-powered: returns top-K crops ranked by smart_score (blending ML
+       confidence, ROI, risk, budget fit, soil health). Each entry shows
+       prediction_source and ml_confidence.
+
+  5.12 Batch Simulation              POST /api/batch-simulate
+       Simulate multiple crops simultaneously. Returns all results sorted by profit.
+
+  5.13 Optimal Crop Mix              POST /api/optimal-mix
+       Multi-crop allocation optimizer: given total area + budget, allocates
+       across crops to maximize total profit.
+
+  ---- Market Intelligence ----
+
+  5.14 Mandi Price Analytics         GET  /api/price-analytics/{region_id}/{crop_id}
+       Computes: average price, volatility, trend (rising/falling/stable),
+       3-month moving average, seasonal monthly pattern, best/worst selling month.
+
+  5.15 Yield Trend                   GET  /api/yield-trend/{region_id}/{crop_id}
+       Historical yield with year-over-year growth percentage.
+
+  5.16 MSP Database                  GET  /api/msp?crop_id=rice&year=2025
+       Returns Minimum Support Price data from msp_prices.csv.
+
+  5.17 MSP vs Market Comparison      GET  /api/msp-vs-market/{region_id}/{crop_id}
+       Compares latest MSP with current mandi price. Shows premium/discount
+       percentage and recommends sell at market or sell at MSP.
+
+  5.18 Best Time to Sell Advisor     GET  /api/sell-advisor/{region_id}/{crop_id}
+       Analyzes seasonal price patterns. Returns hold/sell/partial-sell advice
+       with best month to sell, expected price gain if farmer holds.
+
+  5.19 Price Forecast (ML-powered)   GET  /api/price-forecast/{region_id}/{crop_id}?months_ahead=6
+       ML model (GradientBoosting) forecasts prices 1-6 months ahead using
+       iterative autoregressive prediction with lag features.
+       Falls back to seasonal + linear trend if model unavailable.
+
+  5.20 Cross-Mandi Arbitrage         GET  /api/arbitrage/{crop_id}
+       Compares latest prices for a crop across all regions.
+       Identifies highest/lowest price regions and arbitrage spread percentage.
+
+  ---- Farm Advisory ----
+
+  5.21 Fertilizer Recommendation     GET  /api/fertilizer-recommendation/{crop_id}?n=45&p=22&k=25
+       Compares soil NPK with crop requirements. Recommends specific fertilizer
+       names (Urea, DAP, MOP) with exact quantities in kg/acre.
+
+  5.22 Irrigation Scheduler          GET  /api/irrigation-schedule/{crop_id}?sowing_date=2025-06-15&rainfall_mm=800
+       Week-by-week water plan for entire crop duration. Adjusts for rainfall
+       and irrigation level. Shows critical water stress periods.
+
+  5.23 Crop Calendar                 GET  /api/crop-calendar/{crop_id}?season=kharif
+       Complete sowing-to-harvest timeline: land prep, sowing, fertilizer
+       application dates, critical irrigation windows, pest watch periods,
+       harvest window, total duration.
+
+  5.24 Pest & Disease Risk Alerts    GET  /api/pest-alerts/{crop_id}?avg_temp_c=28&rainfall_mm=900
+       Weather-based pest/disease risk assessment. Matches current conditions
+       against 18 pest rules from pest_rules.csv. Returns severity, description,
+       and specific management recommendations (chemical/biological).
+
+  5.25 Rotation Planner              POST /api/rotation-plan
+       Recommends optimal kharif-rabi annual crop rotation. Scores all
+       season combinations by profit, risk, and diversity bonus.
+
+  5.26 Loan/Credit Calculator        POST /api/loan-calculator
+       Computes: EMI, total repayment, interest burden, DSCR (debt service
+       coverage ratio), and feasibility verdict (safe/moderate/risky).
+
+  5.27 Multi-Year Soil Projection    POST /api/soil-projection
+       Projects soil NPK levels over 3-5 years based on chosen crop rotation.
+       Models nutrient depletion per crop, legume nitrogen fixation, and
+       fertilizer restoration (60% efficiency). Returns timeline + health trend.
+
+  5.28 Regional Benchmark            POST /api/benchmark
+       Compares farmer's actual yield and profit against regional averages.
+       Shows percentile ranking and gap analysis.
+
+  ---- Farm Management ----
+
+  5.29 Log Expense                   POST /api/expense/log
+       Records actual expenses by farm_id, category, amount, date, notes.
+       In-memory store (production would use database).
+
+  5.30 Expense Summary               GET  /api/expense/{farm_id}?planned_budget=15000
+       Returns expense totals by category with optional variance analysis
+       against planned budget (over/under budget with percentage).
+
+  5.31 Strategy Templates            GET  /api/strategy-templates?profile=small
+       8 pre-built strategy presets: conservative, aggressive, balanced,
+       water-saver, organic, high-value, subsistence, diversified.
+       Filterable by farmer profile (small, medium, large).
+
+  5.32 Government Scheme Matcher     GET  /api/government-schemes?crop_id=rice&area_acres=2&season=kharif
+       Matches farmer profile against 12 government schemes from
+       government_schemes.csv. Filters by crop, region, area, and season
+       eligibility. Returns scheme details, benefit type, and application URLs.
+
+  ---- ML Management ----
+
+  5.33 Train All Models              POST /api/ml/train
+       Retrains all 3 ML models on current CSV data. Returns training metrics
+       (R^2, MAE, RMSE, accuracy) and feature importances for each model.
+
+  5.34 Model Status                  GET  /api/ml/status
+       Reports which models are loaded, model directory path, and full
+       training manifest with metrics.
+
+
+6. DATA PIPELINE
+================================================================================
+
+  CSV Files (source of truth)
+       |
+       v
+  _load_csv() / _load_crop_parameters() -- cached in memory at first call
+       |
+       +---> engine/simulator.py      (uses crop_parameters, for simulation)
+       +---> ml/predict.py            (uses all CSVs for predictions)
+       +---> ml/train_models.py       (uses all CSVs for model training)
+       +---> engine/features.py       (uses mandi_prices, msp_prices,
+       |                               government_schemes, pest_rules)
+       v
+  ML Models (.joblib files in ml/models/)
+       |
+       v
+  API Endpoints (backend/main.py) -- serve results as JSON
+
+
+7. CROPS SUPPORTED (8)
+================================================================================
+
+  rice, wheat, maize, sugarcane, cotton, pulses, groundnut, soybean
+
+  Seasons: kharif (Jun-Oct), rabi (Nov-Mar), annual (sugarcane)
+
+
+8. REGIONS SUPPORTED (3)
+================================================================================
+
+  mp_sehore    - Sehore, Madhya Pradesh (Black cotton soil, pH 7.2)
+  up_lucknow   - Lucknow, Uttar Pradesh (Alluvial soil, pH 7.5)
+  mh_pune      - Pune, Maharashtra (Laterite soil, pH 6.5)
+
+
+9. KEY ALGORITHMS & FORMULAS
+================================================================================
+
+  Yield Estimation (heuristic fallback):
+    yield = base_yield * soil_factor * climate_factor * irrigation_factor
+    soil_factor depends on NPK adequacy ratios and pH suitability
+    climate_factor depends on temperature fit and rainfall vs water requirement
+
+  Risk Scoring:
+    risk = weighted sum of drought_risk + heat_risk + flood_risk
+           + price_volatility_risk + budget_risk
+    Each sub-risk is 0-100 based on how far conditions deviate from optimal
+
+  Smart Score (crop ranking):
+    smart_score = 0.35 * ROI_normalized
+                + 0.20 * confidence_score (100 - risk)
+                + 0.15 * budget_fit
+                + 0.15 * soil_health
+                + 0.15 * ML_confidence_bonus
+
+  Sensitivity Matrix:
+    Simulates profit under price variations (-20%, -10%, base, +10%, +20%)
+    crossed with yield variations (-20%, -10%, base, +10%, +20%)
+    = 25-cell profit matrix
+
+  Soil Health Projection:
+    Per crop per season: NPK += nutrient_impact[crop]
+    Legumes (pulses, groundnut, soybean) add +10 to +15 N via fixation
+    Heavy feeders (sugarcane, cotton, maize) deplete -25 to -40 N
+    Fertilizer restores deficit at 60% efficiency
+
+  Loan Feasibility:
+    EMI = P * r * (1+r)^n / ((1+r)^n - 1)
+    DSCR = expected_profit / annual_repayment
+    Verdict: DSCR >= 1.5 = safe, 1.0-1.5 = moderate, < 1.0 = risky
+
+
+10. HOW TO RUN
+================================================================================
+
+  # Install dependencies
+  pip install -r requirements.txt
+  pip install scikit-learn numpy joblib
+
+  # Train ML models (one-time, or call POST /api/ml/train)
+  python -m ml.train_models
+
+  # Start server
+  python backend/main.py
+  # Server runs at http://localhost:8000
+  # Swagger docs at http://localhost:8000/docs
+  # Frontend at http://localhost:8000/
+
+================================================================================
+11. TECH STACK & ARCHITECTURE DECISIONS
+================================================================================
+
+Backend & API:
+- Python 3.10+ & FastAPI Core: Chosen for high-performance async capabilities (Uvicorn), built-in data validation (Pydantic models), automatic OpenAPI (Swagger) documentation, and seamless integration with Python's data science ecosystem.
+
+Frontend Single Page Application (SPA):
+- Vanilla JavaScript, HTML5, Tailwind CSS (CDN), & Chart.js: Chosen to maintain a strict "zero build pipeline" (No React/Node/Webpack dependencies). This ensures the app is extremely lightweight, instantaneously deployable via FastAPI static mounting, and capable of rendering complex visualizations (Chart.js Radar/Doughnut) securely offline or in low-bandwidth zones. 
+- UI Aesthetic: "Earthy Claymorphism" was utilized to ensure a tactical, friendly, "field journal" feel that departs from sterile B2B SaaS norms, focusing deeply on farmer accessibility via Lucide iconography and clear typographic hierarchy (Fraunces + Quicksand).
+
+Machine Learning & Simulation Engine:
+- Scikit-Learn (RandomForest, GradientBoosting), Numpy, Joblib: Chosen because ensemble tree-based models elegantly handle complex, non-linear environmental relationships (like how N/P/K and Rainfall interplay) without requiring the massive overhead or latency of Deep Learning neural networks.
+
+Data Persistence:
+- Structured Flat CSV Files (`dataset/`): Selected for rapid Hackathon MVP iteration. Eliminates external database administration (like PostgreSQL) while using a structure directly translatable to SQL tables in the future. The Pydantic models abstract away the CSV nature from the business logic.
+
+================================================================================
+12. POTENTIAL EVALUATION QUESTIONS & ANSWERS
+================================================================================
+
+Q1. Why did you choose Vanilla JS over modern frameworks like React or Angular?
+A1: We wanted this MVP to be as deployable and dependency-free as possible. Avoiding a node_modules build pipeline means the entire application runs natively out of a basic Python environment. It loads incredibly fast, ensuring high performance in low-connectivity rural zones, while vanilla JS ES6 class structures (ApiClient, AppState) neatly replicate framework capabilities.
+
+Q2. How does the deterministic Simulation Engine work alongside the Machine Learning models?
+A2: The Core Engine handles deterministic logic (fixed input costs, baseline constraints, basic multipliers), while the ML models sit on top of it to introduce real-world variance. The ML algorithms predict the yield based on complex historic weather and soil feature interactions, and evaluate risk scores (Price Volatility, Pest, Drought) based on prior disaster logs. 
+
+Q3. What exactly drives the 0-100 "Risk Score"?
+A3: The risk evaluates four distinct sub-components:
+1. Drought Risk (historical rainfall vs. the specific crop's exact minimum water requirement).
+2. Flood Risk (excessive weather averages).
+3. Pest & Disease Alerting (based on humidity/temp thresholds overlapping crop vulnerability).
+4. Price Volatility (standard deviation of Mandi baseline prices over the last 5 years).
+These subscores are weighted and collapsed into a 0-100 metric visualizable on our Radar Chart.
+
+Q4. How scalable is the current CSV database approach?
+A4: CSV is used strictly as a structural MVP scaffolding. Because we pipe data reads through internal helper functions and enforce strong typing via FastAPI's Pydantic Data Models, migrating to a robust PostgreSQL or MongoDB instance later requires almost zero rewrites of the business logic or frontend APIs — we only need to swap the driver in our helper methods.
+
+Q5. How does the system generate "Smart Recommendations"?
+A5: When a user enters their region and budget, the system routes these inputs through our ML-powered `recommend_crops` matrix. It simulates the profitability, calculates the predictive risk, assigns a 'Smart Score' balancing ROI against agricultural feasibility for the season, and serves the top 3 safest and most profitable choices directly to the Farm Setup UI.
+
+================================================================================
+                          END OF OVERVIEW
+================================================================================

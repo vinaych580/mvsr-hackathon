@@ -7,6 +7,8 @@ from pathlib import Path
 
 import requests
 
+from data_ingestion.cache import cached
+
 _DATASET_DIR = Path(__file__).resolve().parents[2] / "dataset"
 _FALLBACK_CSV = _DATASET_DIR / "mandi_prices.csv"
 
@@ -27,6 +29,7 @@ _BASE_URL = "https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d00
 logger = logging.getLogger(__name__)
 
 
+@cached(ttl_seconds=3600, key="mandi_price")  # 1-hour TTL; prices update a few times/day
 def fetch_mandi_price(crop_id: str, state: str | None = None) -> float | None:
     """
     Fetch latest mandi price (INR/kg) for a crop from data.gov.in.

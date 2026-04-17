@@ -1,0 +1,13 @@
+scheme_id,scheme_name,description,eligible_crops,eligible_regions,min_area_acres,max_area_acres,benefit_type,benefit_value,season,url
+pmkisan,PM-KISAN,Direct income support of Rs 6000/year in 3 installments to small and marginal farmers,all,all,0,5,cash_transfer,6000,all,https://pmkisan.gov.in
+pmfby,PMFBY (Crop Insurance),Subsidized crop insurance covering natural calamities at 2% premium for kharif and 1.5% for rabi,all,all,0,999,insurance,premium_subsidy,all,https://pmfby.gov.in
+kkc,Kisan Credit Card,Short-term crop loans at 4% interest (with prompt repayment). Limit based on crop + area.,all,all,0,999,credit,4pct_interest,all,https://www.nabard.org
+soil_health,Soil Health Card Scheme,Free soil testing and nutrient-specific fertilizer recommendations for every farm,all,all,0,999,advisory,free_soil_test,all,https://soilhealth.dac.gov.in
+nmsa,NMSA (National Mission for Sustainable Agriculture),Promotes drip/sprinkler irrigation with 55-60% subsidy on micro-irrigation systems,all,all,0,999,subsidy,55pct_irrigation,all,https://nmsa.dac.gov.in
+pkvy,Paramparagat Krishi Vikas Yojana,Rs 50000/ha over 3 years for organic farming clusters of 20+ farmers,all,all,0,999,cash_transfer,50000_per_ha,all,https://pgsindia-ncof.gov.in
+nfsm_rice,NFSM (Rice),Subsidized seeds, INM/IPM demos, farm machinery for rice-growing districts,rice,all,0,999,subsidy,seed_subsidy,kharif,https://nfsm.gov.in
+nfsm_wheat,NFSM (Wheat),Subsidized seeds and demonstrations for wheat productivity improvement,wheat,all,0,999,subsidy,seed_subsidy,rabi,https://nfsm.gov.in
+nfsm_pulses,NFSM (Pulses),Subsidized seeds + 50% cost support for IPM demos and sprinkler sets,pulses,all,0,999,subsidy,seed_and_equipment,all,https://nfsm.gov.in
+tmne,Technology Mission on Oilseeds,Support for soybean and groundnut via subsidized seeds and demonstrations,soybean;groundnut,all,0,999,subsidy,seed_subsidy,kharif,https://nfsm.gov.in
+cotton_msp,Cotton MSP Support,Government procurement at MSP through CCI when market price falls below MSP,cotton,all,0,999,price_support,msp_procurement,kharif,https://cotcorp.org.in
+sugarcane_frp,Sugarcane FRP,Fair and Remunerative Price set annually by CACP for sugarcane procurement,sugarcane,all,0,999,price_support,frp_guaranteed,annual,https://dfpd.gov.in

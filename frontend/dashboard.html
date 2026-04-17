@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard · Mitti Mantra</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="assets/logo-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="assets/logo-192.png">
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav scrolled" id="nav">
+    <div class="nav__wrap">
+      <a href="index.html" class="logo" aria-label="Mitti Mantra home">
+        <img src="assets/logo.png" alt="Mitti Mantra — Growing the future" class="logo__img">
+      </a>
+      <ul class="nav__links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="index.html#features">Features</a></li>
+        <li><a href="farm-boundary.html">Draw farm</a></li>
+        <li><a href="index.html#demo">Demo</a></li>
+      </ul>
+      <div class="nav__cta">
+        <a href="/docs" class="btn btn-ghost">API Docs</a>
+        <a href="index.html" class="btn btn-primary">Back to site</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="dashx">
+    <!-- Auto-injected when a farm boundary was drawn on farm-boundary.html -->
+    <div id="farmPickup" class="farm-pickup" hidden></div>
+    <div class="dashx__wrap">
+
+      <!-- ========== SIDEBAR ========== -->
+      <aside class="sidebar">
+        <div class="sidebar__group">
+          <div class="sidebar__label">Plan</div>
+          <button class="sidebar__btn active" data-tool="recommend">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2 C9 8 7 12 7 15 a5 5 0 0 0 10 0 c0-3-2-7-5-13z"/></svg>
+            Smart recommend
+          </button>
+          <button class="sidebar__btn" data-tool="simulate">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M7 15l4-6 4 3 5-8"/></svg>
+            Yield & profit
+          </button>
+          <button class="sidebar__btn" data-tool="rotation">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
+            Rotation planner
+          </button>
+        </div>
+
+        <div class="sidebar__group">
+          <div class="sidebar__label">Strategies</div>
+          <button class="sidebar__btn" data-tool="templates">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            Strategy templates
+          </button>
+          <button class="sidebar__btn" data-tool="compare">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 3v18M16 3v18M3 8h5M16 8h5M3 16h5M16 16h5"/></svg>
+            Compare crops
+          </button>
+          <button class="sidebar__btn" data-tool="mix">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="9"/></svg>
+            Optimal mix
+          </button>
+        </div>
+
+        <div class="sidebar__group">
+          <div class="sidebar__label">Market</div>
+          <button class="sidebar__btn" data-tool="forecast">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>
+            Price forecast
+          </button>
+          <button class="sidebar__btn" data-tool="msp">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            MSP vs market
+          </button>
+          <button class="sidebar__btn" data-tool="sell">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v6l4 2"/></svg>
+            Best time to sell
+          </button>
+          <button class="sidebar__btn" data-tool="arbitrage">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17l10-10M17 7v10h-10"/></svg>
+            Arbitrage
+          </button>
+        </div>
+
+        <div class="sidebar__group">
+          <div class="sidebar__label">Field</div>
+          <button class="sidebar__btn" data-tool="calendar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            Crop calendar
+          </button>
+          <button class="sidebar__btn" data-tool="irrigation">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2 C9 8 7 12 7 15 a5 5 0 0 0 10 0 c0-3-2-7-5-13z"/></svg>
+            Irrigation plan
+          </button>
+          <button class="sidebar__btn" data-tool="fertilizer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M6 8h12"/></svg>
+            Fertilizer mix
+          </button>
+          <button class="sidebar__btn" data-tool="pest">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/><circle cx="12" cy="12" r="4"/></svg>
+            Pest alerts
+          </button>
+        </div>
+
+        <div class="sidebar__group">
+          <div class="sidebar__label">Finance</div>
+          <button class="sidebar__btn" data-tool="loan">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+            Loan feasibility
+          </button>
+          <button class="sidebar__btn" data-tool="schemes">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 7V3M16 7V3M4 11h16"/><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M9 15l2 2 4-4"/></svg>
+            Govt. schemes
+          </button>
+        </div>
+
+        <div class="sidebar__group">
+          <div class="sidebar__label">System</div>
+          <button class="sidebar__btn" data-tool="ml">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"/></svg>
+            ML status
+          </button>
+        </div>
+      </aside>
+
+      <!-- ========== TOOL AREA ========== -->
+      <div class="toolbox">
+
+        <!-- 1. RECOMMEND -->
+        <section class="tool active" data-tool="recommend">
+          <div class="tool__head">
+            <div class="tool__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 C9 8 7 12 7 15 a5 5 0 0 0 10 0 c0-3-2-7-5-13z"/></svg></div>
+            <div>
+              <h2>Smart crop recommendations</h2>
+              <p>ML model ranks the best crops for your land and budget. Blends ROI, risk, soil health, and model confidence.</p>
+            </div>
+          </div>
+          <form data-form="recommend">
+            <div class="form-row">
+              <div class="field"><label>Region</label><select name="region_id" data-regions></select></div>
+              <div class="field"><label>Season</label><select name="season"><option value="kharif">Kharif</option><option value="rabi">Rabi</option></select></div>
+              <div class="field"><label>Area (acres)</label><input name="area_acres" type="number" step="0.1" value="4"></div>
+              <div class="field"><label>Budget / acre (₹)</label><input name="budget_per_acre" type="number" step="500" value="15000"></div>
+            </div>
+            <button class="btn btn-primary" type="submit">Run recommendation</button>
+          </form>
+          <div class="output" data-out="recommend"></div>
+        </section>
+
+        <!-- 2. SIMULATE -->
+        <section class="tool" data-tool="simulate">
+          <div class="tool__head">
+            <div class="tool__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-6 4 3 5-8"/></svg></div>
+            <div><h2>Yield & profit simulation</h2><p>Full simulation: yield, cost breakdown, profit, ROI, risk score, water efficiency, nutrient gap.</p></div>
+          </div>
+          <form data-form="simulate">
+            <div class="form-row">
+              <div class="field"><label>Region</label><select name="region_id" data-regions></select></div>
+              <div class="field"><label>Crop</label><select name="crop_id" data-crops></select></div>
+              <div class="field"><label>Area (acres)</label><input name="area_acres" type="number" step="0.1" value="4"></div>
+              <div class="field"><label>Irrigation (0–1)</label><input name="irrigation_level" type="number" step="0.1" min="0" max="1" value="0.6"></div>
+            </div>
+            <div class="form-row form-row--3">
+              <div class="field"><label>Seed (₹)</label><input name="seed_cost_per_acre" type="number" value="2500"></div>
+              <div class="field"><label>Fertilizer (₹)</label><input name="fertilizer_cost_per_acre" type="number" value="4000"></div>
+              <div class="field"><label>Labour (₹)</label><input name="labour_cost_per_acre" type="number" value="5000"></div>
+            </div>
+            <div class="form-row form-row--3">
+              <div class="field"><label>Other costs (₹)</label><input name="other_costs_per_acre" type="number" value="2000"></div>
+              <div class="field"><label>Mandi price (₹/kg)</label><input name="mandi_price_per_kg" type="number" step="0.5" value="22"></div>
+              <div class="field"><label>Season</label><select name="season"><option value="kharif">Kharif</option><option value="rabi">Rabi</option></select></div>
+            </div>
+            <details class="weather-override">
+              <summary>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19a4.5 4.5 0 1 0-1.3-8.8A6 6 0 0 0 4 12a5 5 0 0 0 1 9.9h12.5z"/></svg>
+                Weather &mdash; <b>auto from Open-Meteo</b> <span class="muted">(click to override)</span>
+              </summary>
+              <div class="weather-override__body">
+                <label class="weather-override__toggle">
+                  <input type="checkbox" name="weather_override_on">
+                  Use my own rainfall / temperature
+                </label>
+                <div class="form-row form-row--3">
+                  <div class="field"><label>Rainfall (mm)</label><input name="rainfall_mm" type="number" step="1" placeholder="e.g. 780"></div>
+                  <div class="field"><label>Avg temp (°C)</label><input name="avg_temp_c" type="number" step="0.1" placeholder="e.g. 26.5"></div>
+                  <div class="field"><label>&nbsp;</label><button type="button" class="btn btn-ghost" data-weather-fetch>Fetch live weather</button></div>
+                </div>
+              </div>
+            </details>
+            <button class="btn btn-primary" type="submit">Simulate</button>
+          </form>
+          <div class="output" data-out="simulate"></div>
+        </section>
+
+        <!-- 3. ROTATION -->
+        <section class="tool" data-tool="rotation">
+          <div class="tool__head">
+            <div class="tool__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg></div>
+            <div><h2>Rotation planner</h2><p>Best kharif → rabi pairs for the whole year, ranked by profit, risk, and diversity bonus.</p></div>
+          </div>
+          <form data-form="rotation">
+            <div class="form-row">
+              <div class="field"><label>Region</label><select name="region_id" data-regions></select></div>
+              <div class="field"><label>Area (acres)</label><input name="area_acres" type="number" step="0.1" value="4"></div>
+              <div class="field"><label>Budget / acre (₹)</label><input name="budget_per_acre" type="number" step="500" value="15000"></div>
+            </div>
+            <button class="btn btn-primary" type="submit">Plan rotation</button>
+          </form>
+          <div class="output" data-out="rotation"></div>
+        </section>
+
+        <!-- 3b. STRATEGY TEMPLATES -->
+        <section class="tool" data-tool="templates">
+          <div class="tool__head">
+            <div class="tool__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+            <div><h2>Strategy templates</h2><p>Pre-built farming strategies: conservative, aggressive, organic, water-saver, and more. Pick one and simulate instantly.</p></div>
+          </div>
+          <form data-form="templates">
+            <div class="form-row">
+              <div class="field"><label>Farmer profile</label>
+                <select name="profile">
+                  <option value="">All profiles</option>
+                  <option value="small">Small / marginal</option>
+                  <option value="medium">Medium</option>
+                  <option value="large">Large</option>
+                </select>
+              </div>
+            </div>
+            <button class="btn btn-primary" type="submit">Load templates</button>
+          </form>
+          <div class="output" data-out="templates"></div>
+        </section>
+
+        <!-- 3c. COMPARE CROPS (batch-simulate) -->
+        <section class="tool" data-tool="compare">
+          <div class="tool__head">
+            <div class="tool__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3v18M16 3v18M3 8h5M16 8h5M3 16h5M16 16h5"/></svg></div>
+            <div><h2>Compare crops head-to-head</h2><p>Simulate 2–6 crops on the same land and budget. See them ranked by profit, with ROI & risk side-by-side.</p></div>
+          </div>
+          <form data-form="compare">
+            <div class="form-row">
+              <div class="field"><label>Region</label><select name="region_id" data-regions></select></div>
+              <div class="field"><label>Season</label><select name="season"><option value="kharif">Kharif</option><option value="rabi">Rabi</option></select></div>
+              <div class="field"><label>Area (acres)</label><input name="area_acres" type="number" step="0.1" value="5"></div>
+              <div class="field"><label>Budget / acre (₹)</label><input name="budget_per_acre" type="number" step="500" value="15000"></div>
+            </div>
+            <div class="field">
+              <label>Crops to compare (hold Ctrl/Cmd to select multiple)</label>
+              <select name="crop_ids" data-crops multiple size="7" style="height:auto;"></select>
+            </div>
+            <div class="form-row">
+              <div class="field"><label>Irrigation (0–1)</label><input name="irrigation_level" type="number" step="0.1" min="0" max="1" value="0.6"></div>
+            </div>
+            <button class="btn btn-primary" type="submit">Compare selected crops</button>
+          </form>
+          <div class="output" data-out="compare"></div>
+        </section>
+
+        <!-- 3d. OPTIMAL MIX -->
+        <section class="tool" data-tool="mix">
+          <div class="tool__head">
+            <div class="tool__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 2v20M2 12h20"/></svg></div>
+            <div><h2>Optimal crop mix</h2><p>Given total land and budget, allocate across multiple crops to maximise profit. Auto-diversified by smart-score weighting.</p></div>
+          </div>
+          <form data-form="mix">
+            <div class="form-row form-row--4">
+              <div class="field"><label>Region</label><select name="region_id" data-regions></select></div>
+              <div class="field"><label>Season</label><select name="season"><option value="kharif">Kharif</option><option value="rabi">Rabi</option></select></div>
+              <div class="field"><label>Total area (acres)</label><input name="total_area_acres" type="number" step="0.5" value="10"></div>
+              <div class="field"><label>Total budget (₹)</label><input name="total_budget" type="number" step="1000" value="150000"></div>
+            </div>
+            <button class="btn btn-primary" type="submit">Optimise mix</button>
+          </form>
+          <div class="output" data-out="mix"></div>
+        </section>
+
+        <!-- 4. FORECAST -->
+        <section class="tool" data-tool="forecast">
+          <div class="tool__head">
+            <div class="tool__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div>
+            <div><h2>Price forecast</h2><p>GradientBoosting model forecasts mandi prices up to 6 months ahead using lag features.</p></div>
+          </div>
+          <form data-form="forecast">
+            <div class="form-row form-row--3">
+              <div class="field"><label>Region</label><select name="region_id" data-regions></select></div>
+              <div class="field"><label>Crop</label><select name="crop_id" data-crops></select></div>
+              <div class="field"><label>Months ahead</label><input name="months_ahead" type="number" min="1" max="6" value="6"></div>
+            </div>
+            <button class="btn btn-primary" type="submit">Forecast</button>
+          </form>
+          <div class="output" data-out="forecast"></div>
+        </section>
+
+        <!-- 5. MSP -->
+        <section class="tool" data-tool="msp">
+          <div class="tool__head">
+            <div class="tool__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+            <div><h2>MSP vs market</h2><p>Compare current mandi price with Minimum Support Price. Get a sell recommendation.</p></div>
+          </div>
+          <form data-form="msp">
+            <div class="form-row">
+              <div class="field"><label>Region</label><select name="region_id" data-regions></select></div>
+              <div class="field"><label>Crop</label><select name="crop_id" data-crops></select></div>
+            </div>
+            <button class="btn btn-primary" type="submit">Compare</button>
+          </form>
+          <div class="output" data-out="msp"></div>
+        </section>
+
+        <!-- 6. SELL -->
+        <section class="tool" data-tool="sell">
+          <div class="tool__head">
+            <div class="tool__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v6l4 2"/></svg></div>
+            <div><h2>Best time to sell</h2><p>Seasonal price analysis. Hold, sell now, or sell partial — with expected gain.</p></div>
+          </div>
+          <form data-form="sell">
+            <div class="form-row">
+              <div class="field"><label>Region</label><select name="region_id" data-regions></select></div>
+              <div class="field"><label>Crop</label><select name="crop_id" data-crops></select></div>
+            </div>
+            <button class="btn btn-primary" type="submit">Analyse</button>
+          </form>
+          <div class="output" data-out="sell"></div>
+        </section>
+
+        <!-- 7. ARBITRAGE -->
+        <section class="tool" data-tool="arbitrage">
+          <div class="tool__head">
+            <div class="tool__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l10-10M17 7v10h-10"/></svg></div>
+            <div><h2>Cross-mandi arbitrage</h2><p>Compare latest prices for a crop across all regions. Spot the best mandi instantly.</p></div>
+          </div>
+          <form data-form="arbitrage">
+            <div class="form-row">
+              <div class="field"><label>Crop</label><select name="crop_id" data-crops></select></div>
+            </div>
+            <button class="btn btn-primary" type="submit">Find spread</button>
+          </form>
+          <div class="output" data-out="arbitrage"></div>
+        </section>
+
+        <!-- 8. CALENDAR -->
+        <section class="tool" data-tool="calendar">
+          <div class="tool__head">
+            <div class="tool__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+            <div><h2>Crop calendar</h2><p>Sowing → harvest timeline: land prep, fertilizer dates, irrigation windows, pest watch.</p></div>
+          </div>
+          <form data-form="calendar">
+            <div class="form-row">
+              <div class="field"><label>Crop</label><select name="crop_id" data-crops></select></div>
+              <div class="field"><label>Season</label><select name="season"><option value="kharif">Kharif</option><option value="rabi">Rabi</option></select></div>
+            </div>
+            <button class="btn btn-primary" type="submit">Build calendar</button>
+          </form>
+          <div class="output" data-out="calendar"></div>
+        </section>
+
+        <!-- 9. IRRIGATION -->
+        <section class="tool" data-tool="irrigation">
+          <div class="tool__head">
+            <div class="tool__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 C9 8 7 12 7 15 a5 5 0 0 0 10 0 c0-3-2-7-5-13z"/></svg></div>
+            <div><h2>Irrigation schedule</h2><p>Week-by-week water plan for the full crop duration. Adjusted for rainfall and irrigation level.</p></div>
+          </div>
+          <form data-form="irrigation">
+            <div class="form-row form-row--4">
+              <div class="field"><label>Crop</label><select name="crop_id" data-crops></select></div>
+              <div class="field"><label>Sowing date</label><input name="sowing_date" type="date" value="2025-06-15"></div>
+              <div class="field"><label>Rainfall (mm)</label><input name="rainfall_mm" type="number" value="800"></div>
+              <div class="field"><label>Irrigation (0–1)</label><input name="irrigation_level" type="number" step="0.1" min="0" max="1" value="0.6"></div>
+            </div>
+            <button class="btn btn-primary" type="submit">Build schedule</button>
+          </form>
+          <div class="output" data-out="irrigation"></div>
+        </section>
+
+        <!-- 10. FERTILIZER -->
+        <section class="tool" data-tool="fertilizer">
+          <div class="tool__head">
+            <div class="tool__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M6 8h12"/></svg></div>
+            <div><h2>Fertilizer recommendation</h2><p>How much Urea, DAP, MOP to apply — based on your soil NPK vs crop's requirement.</p></div>
+          </div>
+          <form data-form="fertilizer">
+            <div class="form-row form-row--4">
+              <div class="field"><label>Crop</label><select name="crop_id" data-crops></select></div>
+              <div class="field"><label>Soil N (kg/ha)</label><input name="n" type="number" value="45"></div>
+              <div class="field"><label>Soil P (kg/ha)</label><input name="p" type="number" value="22"></div>
+              <div class="field"><label>Soil K (kg/ha)</label><input name="k" type="number" value="25"></div>
+            </div>
+            <button class="btn btn-primary" type="submit">Recommend</button>
+          </form>
+          <div class="output" data-out="fertilizer"></div>
+        </section>
+
+        <!-- 11. PEST -->
+        <section class="tool" data-tool="pest">
+          <div class="tool__head">
+            <div class="tool__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg></div>
+            <div><h2>Pest & disease alerts</h2><p>Weather-triggered risk from 18 pest rules. Management plans included.</p></div>
+          </div>
+          <form data-form="pest">
+            <div class="form-row form-row--3">
+              <div class="field"><label>Crop</label><select name="crop_id" data-crops></select></div>
+              <div class="field"><label>Avg temp (°C)</label><input name="avg_temp_c" type="number" step="0.5" value="28"></div>
+              <div class="field"><label>Rainfall (mm)</label><input name="rainfall_mm" type="number" value="900"></div>
+            </div>
+            <button class="btn btn-primary" type="submit">Scan risk</button>
+          </form>
+          <div class="output" data-out="pest"></div>
+        </section>
+
+        <!-- 12. LOAN -->
+        <section class="tool" data-tool="loan">
+          <div class="tool__head">
+            <div class="tool__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></div>
+            <div><h2>Loan & credit calculator</h2><p>EMI, total repayment, DSCR, and feasibility verdict (safe / moderate / risky).</p></div>
+          </div>
+          <form data-form="loan">
+            <div class="form-row form-row--3">
+              <div class="field"><label>Total cost (₹)</label><input name="total_cost" type="number" value="50000"></div>
+              <div class="field"><label>Expected profit (₹)</label><input name="expected_profit" type="number" value="80000"></div>
+              <div class="field"><label>Loan amount (₹)</label><input name="loan_amount" type="number" value="40000"></div>
+            </div>
+            <div class="form-row">
+              <div class="field"><label>Interest rate % /yr</label><input name="interest_rate_annual" type="number" step="0.1" value="4"></div>
+              <div class="field"><label>Tenure (months)</label><input name="tenure_months" type="number" value="12"></div>
+            </div>
+            <button class="btn btn-primary" type="submit">Check feasibility</button>
+          </form>
+          <div class="output" data-out="loan"></div>
+        </section>
+
+        <!-- 13. SCHEMES -->
+        <section class="tool" data-tool="schemes">
+          <div class="tool__head">
+            <div class="tool__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M9 15l2 2 4-4"/></svg></div>
+            <div><h2>Government schemes</h2><p>Match your profile against 12 central/state schemes. Get eligibility, benefits, links.</p></div>
+          </div>
+          <form data-form="schemes">
+            <div class="form-row form-row--3">
+              <div class="field"><label>Crop (optional)</label><select name="crop_id"><option value="">Any</option></select></div>
+              <div class="field"><label>Season</label><select name="season"><option value="">Any</option><option value="kharif">Kharif</option><option value="rabi">Rabi</option></select></div>
+              <div class="field"><label>Area (acres)</label><input name="area_acres" type="number" step="0.1" value="4"></div>
+            </div>
+            <button class="btn btn-primary" type="submit">Find schemes</button>
+          </form>
+          <div class="output" data-out="schemes"></div>
+        </section>
+
+        <!-- 14. ML STATUS -->
+        <section class="tool" data-tool="ml">
+          <div class="tool__head">
+            <div class="tool__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6M12 17v6M1 12h6M17 12h6"/></svg></div>
+            <div><h2>ML model status</h2><p>Live status of the 3 ML models. Retrain on demand.</p></div>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="btn btn-ghost" data-action="ml-status">Check status</button>
+            <button class="btn btn-primary" data-action="ml-train">Retrain all models</button>
+          </div>
+          <div class="output" data-out="ml"></div>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer" style="padding:48px 0 24px;margin-top:40px;">
+    <div class="container">
+      <div class="footer__bottom" style="border:none;padding:0;">
+        <div>© 2025 Mitti Mantra · Powered by real Indian farm data.</div>
+        <a href="/docs" style="color:var(--accent);font-weight:600;">API Docs →</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- `defer` preserves execution order AFTER HTML parsing completes.
+       This unblocks rendering while keeping mm-core → dashboard → mm-enhance ordering intact. -->
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script defer src="mm-core.js"></script>
+  <script defer src="site-ui.js"></script>
+  <script defer src="offline-simulator.js"></script>
+  <script defer src="dashboard.js"></script>
+  <script defer src="mm-enhance.js"></script>
+  <script defer src="i18n.js"></script>
+  <script defer src="toolbar.js"></script>
+  <script defer src="chatbot.js"></script>
+</body>
+</html>

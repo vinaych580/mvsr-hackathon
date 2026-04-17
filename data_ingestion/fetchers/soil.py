@@ -6,6 +6,8 @@ from pathlib import Path
 
 import requests
 
+from data_ingestion.cache import cached
+
 _DATASET_DIR = Path(__file__).resolve().parents[2] / "dataset"
 _FALLBACK_CSV = _DATASET_DIR / "soil.csv"
 
@@ -24,6 +26,7 @@ _REGION_COORDS: dict[str, tuple[float, float]] = {
 logger = logging.getLogger(__name__)
 
 
+@cached(ttl_seconds=60 * 60 * 24 * 30, key="soil")  # 30-day TTL — soil props barely change
 def fetch_soil(lat: float, lon: float) -> dict[str, float] | None:
     """
     Fetch soil properties from SoilGrids for given coordinates.

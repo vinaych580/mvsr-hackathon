@@ -1,251 +1,634 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>AgriSim - Farm Strategy Simulator</title>
-    <meta name="description" content="Predict yields, plan costs, and prosper. AI-powered farm simulation utilizing claymorphic interfaces for Indian farmers."/>
-    
-    <!-- Fonts: Fraunces (Headings) and Quicksand (Body Text) -->
-    <link href="https://fonts.googleapis.com" rel="preconnect"/>
-    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet"/>
-    
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Mitti Mantra — AI-powered farm intelligence for Indian agriculture. Smart crop recommendations, yield forecasting, market insights. Growing the future.">
+  <title>Mitti Mantra — AI farm intelligence for every kisan</title>
 
-    <!-- Tailwind JS & Forms Plugin -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
-    <script id="tailwind-config">
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        clay: {
-                            bg: '#F4ECDD',
-                            surface: '#FBF6EA',
-                            deep: '#E8DCC0'
-                        },
-                        moss: {
-                            DEFAULT: '#5C7A4A',
-                            deep: '#3F5A33'
-                        },
-                        terracotta: '#C97B5C',
-                        saffron: '#E0A458',
-                        soil: '#6B4F3A',
-                        bark: '#3B2E25',
-                        sky: { wash: '#A9C4C2' },
-                        risk: { rust: '#A4453A' }
-                    },
-                    fontFamily: {
-                        heading: ['Fraunces', 'serif'],
-                        body: ['Quicksand', 'sans-serif'],
-                    },
-                    boxShadow: {
-                        'clay': '8px 8px 20px rgba(107, 79, 58, 0.18), -6px -6px 16px rgba(255, 250, 235, 0.95), inset 1px 1px 2px rgba(255,255,255,0.6)',
-                        'clay-inset': 'inset 8px 8px 20px rgba(107, 79, 58, 0.12), inset -6px -6px 16px rgba(255, 250, 235, 0.95)'
-                    },
-                    borderRadius: {
-                        'clay': '28px',
-                        'blob': '48px 16px 40px 12px',
-                        'blob-alt': '24px 60px 24px 30px'
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        /* Base reset & Typography */
-        body {
-            background-color: #F4ECDD;
-            color: #3B2E25;
-            font-family: 'Quicksand', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            transition: opacity 200ms ease-in-out;
-            margin: 0; 
-            padding: 0;
-            position: relative;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-        /* Subtle Paper Texture Overlay */
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" opacity="0.04"/%3E%3C/svg%3E');
-            pointer-events: none;
-            z-index: 9999;
-        }
-
-        h1, h2, h3, h4, h5, .font-heading {
-            font-family: 'Fraunces', serif;
-            color: #6B4F3A;
-            font-optical-sizing: auto;
-        }
-
-        /* Tabular lining for prominent numbers */
-        .tabular-nums {
-            font-variant-numeric: tabular-nums;
-        }
-
-        /* Clay Button & Card Interactions */
-        .clay-btn {
-            background-color: #5C7A4A;
-            color: #FBF6EA;
-            font-family: 'Fraunces', serif;
-            font-weight: 600;
-            border-radius: 28px;
-            box-shadow: 8px 8px 20px rgba(107, 79, 58, 0.18), -6px -6px 16px rgba(255, 250, 235, 0.95), inset 1px 1px 2px rgba(255,255,255,0.6);
-            transition: all 120ms ease-in-out;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            cursor: pointer;
-        }
-        .clay-btn:hover {
-            transform: translateY(-2px);
-            background-color: #3F5A33;
-            box-shadow: 6px 6px 15px rgba(107, 79, 58, 0.12), -4px -4px 12px rgba(255, 250, 235, 0.95), inset 1px 1px 2px rgba(255,255,255,0.6);
-        }
-        .clay-btn:active, .clay-btn.active {
-            transform: translateY(1px);
-            background-color: #3F5A33;
-            box-shadow: inset 6px 6px 12px rgba(63, 90, 51, 0.8), inset -4px -4px 8px rgba(100, 130, 80, 0.4);
-        }
-        
-        .clay-card {
-            background-color: #FBF6EA;
-            border-radius: 28px;
-            box-shadow: 8px 8px 20px rgba(107, 79, 58, 0.18), -6px -6px 16px rgba(255, 250, 235, 0.95), inset 1px 1px 2px rgba(255,255,255,0.9);
-            transition: all 200ms ease-out;
-        }
-        .clay-card.interactive:hover {
-            transform: translateY(-4px);
-            box-shadow: 12px 12px 24px rgba(107, 79, 58, 0.12), -8px -8px 20px rgba(255, 250, 235, 0.95), inset 1px 1px 2px rgba(255,255,255,0.9);
-        }
-
-        /* Inset Wells for Inputs */
-        .clay-input-well {
-            background-color: #E8DCC0;
-            border-radius: 16px;
-            box-shadow: inset 6px 6px 12px rgba(107, 79, 58, 0.12), inset -6px -6px 12px rgba(255, 250, 235, 0.8);
-            border: none;
-            padding: 12px 16px;
-            color: #3B2E25;
-            font-family: 'Quicksand', sans-serif;
-            font-weight: 600;
-            width: 100%;
-            outline: none;
-            transition: all 150ms ease;
-        }
-        .clay-input-well:focus {
-            box-shadow: inset 8px 8px 16px rgba(107, 79, 58, 0.18), inset -8px -8px 16px rgba(255, 250, 235, 0.9), 0 0 0 2px #5C7A4A;
-        }
-
-       /* Range Inputs */
-        input[type=range] {
-            -webkit-appearance: none;
-            background: transparent;
-        }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 24px;
-            width: 24px;
-            border-radius: 50%;
-            background: #5C7A4A;
-            box-shadow: 2px 2px 5px rgba(107, 79, 58, 0.3), inset 1px 1px 2px rgba(255,255,255,0.4);
-            cursor: pointer;
-            margin-top: -8px;
-        }
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 8px;
-            cursor: pointer;
-            background: #E8DCC0;
-            border-radius: 4px;
-            box-shadow: inset 2px 2px 5px rgba(107, 79, 58, 0.2);
-        }
-
-        /* Blob Backgrounds */
-        .blob-bg {
-            position: absolute;
-            filter: blur(60px);
-            opacity: 0.4;
-            z-index: -1;
-            border-radius: 48px 16px 40px 12px;
-        }
-
-        /* Crop Badge Faux-Sculpting */
-        .crop-badge {
-            background: linear-gradient(135deg, #FBF6EA, #E8DCC0);
-            box-shadow: inset 2px 2px 5px rgba(255,255,255,0.8), inset -2px -2px 5px rgba(107,79,58,0.1), 4px 4px 10px rgba(107,79,58,0.1);
-        }
-
-        /* Loading Seed Animation */
-        @keyframes pulse-seed {
-            0% { transform: scale(0.95); opacity: 0.5; }
-            50% { transform: scale(1.05); opacity: 1; }
-            100% { transform: scale(0.95); opacity: 0.5; }
-        }
-        .animate-seed { animation: pulse-seed 1.5s infinite ease-in-out; }
-
-        /* Wobbly SVG Divider Pattern */
-        .wobbly-line { width: 100%; height: 2px; }
-    </style>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="assets/logo-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="assets/logo-192.png">
 </head>
 <body>
-    
-    <!-- Navigation -->
-    <header class="w-full z-50 pt-6 px-4 md:px-8 max-w-7xl mx-auto flex-shrink-0">
-        <nav class="flex justify-between items-center bg-clay-surface rounded-clay px-6 py-4 shadow-clay">
-            <a href="#/" class="flex items-center gap-2 text-2xl font-heading font-bold text-soil hover:text-moss transition-colors">
-                <i data-lucide="sprout" class="text-moss"></i> AgriSim
-            </a>
-            
-            <div class="hidden md:flex gap-6 font-semibold text-bark" id="main-nav">
-                <a href="#/" class="hover:text-moss transition-colors">Home</a>
-                <a href="#/setup" class="hover:text-moss transition-colors">Workspace</a>
-                <a href="#/strategy" class="hover:text-moss transition-colors">Strategy</a>
-                <a href="#/results" class="hover:text-moss transition-colors">Journal</a>
-                <a href="#/compare" class="hover:text-moss transition-colors">Compare</a>
-            </div>
 
-            <a href="#/setup" class="clay-btn px-6 py-2.5 text-sm">
-                Get Started
-            </a>
-        </nav>
-    </header>
+  <!-- ============= NAV ============= -->
+  <nav class="nav" id="nav">
+    <div class="nav__wrap">
+      <a href="index.html" class="logo" aria-label="Mitti Mantra home">
+        <img src="assets/logo.png" alt="Mitti Mantra — Growing the future" class="logo__img">
+      </a>
 
-    <!-- SPA Content Container -->
-    <div id="app-content" class="flex-grow flex flex-col relative w-full"></div>
+      <ul class="nav__links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#scene3d">3D</a></li>
+        <li><a href="#how">How it works</a></li>
+        <li><a href="farm-boundary.html">Draw farm</a></li>
+        <li><a href="#demo">Demo</a></li>
+      </ul>
 
-    <!-- Minimal Earthy Footer -->
-    <footer class="mt-20 py-8 text-center text-soil opacity-70 font-semibold  w-full flex-shrink-0">
-        <div class="max-w-4xl mx-auto flex flex-col items-center gap-4">
-            <svg class="wobbly-line" preserveAspectRatio="none" viewBox="0 0 100 2"><path d="M0,1 Q25,2 50,1 T100,1" fill="none" stroke="#E8DCC0" stroke-width="2" stroke-linecap="round"/></svg>
-            <p class="mt-4 text-sm flex items-center justify-center gap-2">
-                <i data-lucide="leaf" class="w-4 h-4"></i> Designed for the Indian Farmer
-            </p>
+      <div class="nav__cta">
+        <a href="/docs" class="btn btn-ghost">API Docs</a>
+        <a href="dashboard.html" class="btn btn-primary">
+          Try it free
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
+        <button class="nav__burger" id="burger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile panel -->
+  <div class="mobile-backdrop" id="mBackdrop"></div>
+  <aside class="mobile-panel" id="mPanel">
+    <button class="mobile-panel__close" id="mClose" aria-label="Close">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <ul>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#stats">Impact</a></li>
+      <li><a href="#demo">Demo</a></li>
+      <li><a href="/docs">API Docs</a></li>
+    </ul>
+    <a href="dashboard.html" class="btn btn-primary">Try it free</a>
+  </aside>
+
+  <!-- ============= HERO ============= -->
+  <header class="hero">
+    <div class="hero__bg">
+      <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&w=1920&q=80" alt="Wheat fields at sunrise" loading="eager">
+    </div>
+    <div class="hero__grain"></div>
+
+    <div class="hero__wrap">
+      <div class="hero__content">
+        <span class="eyebrow">AI-Powered Farm Intelligence</span>
+        <h1 class="hero__title">
+          Mitti se judao,<br>
+          <em>fasal se pao.</em>
+        </h1>
+        <p class="hero__sub">
+          Smart crop recommendations, yield forecasts, and market insights — trained on real Indian farm data. Built for every kisan, from 2-acre families to 200-acre operations.
+        </p>
+        <div class="hero__cta">
+          <a href="dashboard.html" class="btn btn-primary">
+            Explore your land
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </a>
+          <a href="#demo" class="btn btn-ghost">
+            <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 8l6 4-6 4V8z"/></svg>
+            Try demo
+          </a>
         </div>
-    </footer>
 
-    <!-- Load App Logic -->
-    <script src="app.js"></script>
-    <script>
-        // Initialize Lucide icons on DOM Load
-        document.addEventListener("DOMContentLoaded", () => {
-            lucide.createIcons();
-        });
-        window.addEventListener('hashchange', () => {
-            setTimeout(lucide.createIcons, 50); // Re-run after template mounts
-        });
-    </script>
+        <div class="hero__trust">
+          <div class="hero__trust-avatars">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=80&h=80&q=80" alt="">
+            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=80&h=80&q=80" alt="">
+            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=80&h=80&q=80" alt="">
+            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=80&h=80&q=80" alt="">
+          </div>
+          <div class="hero__trust-text">
+            <strong>Trusted by 12,000+ kisans</strong>
+            across Madhya Pradesh, UP, Maharashtra
+          </div>
+        </div>
+      </div>
+
+      <!-- Floating UI cards preview -->
+      <div class="hero__cards" aria-hidden="true">
+        <div class="hero-card hero-card--1">
+          <div class="hero-card__row">
+            <div class="hero-card__ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 C9 8 7 12 7 15 a5 5 0 0 0 10 0 c0-3-2-7-5-13z"/></svg>
+            </div>
+            <div>
+              <div class="hero-card__title">Recommended crop</div>
+              <div class="hero-card__val">Soybean</div>
+              <div class="hero-card__delta">94% ML confidence</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-card hero-card--2">
+          <div class="hero-card__row">
+            <div class="hero-card__ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-6 4 3 5-8"/></svg>
+            </div>
+            <div>
+              <div class="hero-card__title">Projected yield</div>
+              <div class="hero-card__val">1,820 <small class="hero-card__unit">kg/acre</small></div>
+              <div class="hero-card__delta">↑ 18% vs region avg</div>
+            </div>
+          </div>
+          <div class="hero-card__chart">
+            <span style="height:30%"></span><span style="height:45%"></span><span style="height:40%"></span>
+            <span style="height:60%"></span><span style="height:55%"></span><span style="height:75%"></span>
+            <span style="height:68%"></span><span style="height:85%"></span><span style="height:92%"></span>
+            <span style="height:100%"></span>
+          </div>
+        </div>
+
+        <div class="hero-card hero-card--3">
+          <div class="hero-card__row">
+            <div class="hero-card__ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+            <div>
+              <div class="hero-card__title">Expected profit</div>
+              <div class="hero-card__val">₹ 48,250</div>
+              <div class="hero-card__delta">ROI 62%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============= MARQUEE ============= -->
+  <div class="marquee">
+    <div class="marquee__label">Serving farmers across</div>
+    <div class="marquee__track">
+      <span class="marquee__item">🌾 Madhya Pradesh · Sehore</span>
+      <span class="marquee__item">🌿 Uttar Pradesh · Lucknow</span>
+      <span class="marquee__item">☀ Maharashtra · Pune</span>
+      <span class="marquee__item">🌱 Rice · Wheat · Cotton</span>
+      <span class="marquee__item">🌽 Maize · Sugarcane · Pulses</span>
+      <span class="marquee__item">🥜 Groundnut · Soybean</span>
+      <!-- Duplicate for seamless loop -->
+      <span class="marquee__item">🌾 Madhya Pradesh · Sehore</span>
+      <span class="marquee__item">🌿 Uttar Pradesh · Lucknow</span>
+      <span class="marquee__item">☀ Maharashtra · Pune</span>
+      <span class="marquee__item">🌱 Rice · Wheat · Cotton</span>
+      <span class="marquee__item">🌽 Maize · Sugarcane · Pulses</span>
+      <span class="marquee__item">🥜 Groundnut · Soybean</span>
+    </div>
+  </div>
+
+  <!-- ============= FEATURES ============= -->
+  <section class="features" id="features">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Built for real farms</span>
+        <h2>Everything you need from soil to sale</h2>
+        <p>Thirty-two endpoints. Three ML models. One simple goal — help kisans make the right decision at the right time.</p>
+      </div>
+
+      <div class="features__grid reveal-stagger">
+        <article class="feature">
+          <div class="feature__ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 C9 8 7 12 7 15 a5 5 0 0 0 10 0 c0-3-2-7-5-13z"/><path d="M12 12 L12 22"/></svg>
+          </div>
+          <h3>Smart Crop Picks</h3>
+          <p>ML model trained on 45,000 soil-climate combinations ranks the best crops for your land and budget.</p>
+          <span class="feature__tag">RandomForest · 98% accuracy</span>
+        </article>
+
+        <article class="feature feature--gold">
+          <div class="feature__ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-6 4 3 5-8"/></svg>
+          </div>
+          <h3>Yield & Profit Forecast</h3>
+          <p>Predict yield in kg/acre and profit in rupees. Compare scenarios with a 25-cell sensitivity matrix.</p>
+          <span class="feature__tag">R² 0.99 · ± 358 kg</span>
+        </article>
+
+        <article class="feature feature--sky">
+          <div class="feature__ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>
+          </div>
+          <h3>Mandi Price Forecasts</h3>
+          <p>GradientBoosting model forecasts prices 1–6 months ahead. Know when to sell and when to hold.</p>
+          <span class="feature__tag">6-month horizon</span>
+        </article>
+
+        <article class="feature feature--clay">
+          <div class="feature__ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v6l4 2"/></svg>
+          </div>
+          <h3>Crop Calendar & Irrigation</h3>
+          <p>Week-by-week water plan, critical stress windows, and sowing-to-harvest timeline for every crop.</p>
+          <span class="feature__tag">8 crops supported</span>
+        </article>
+
+        <article class="feature">
+          <div class="feature__ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><path d="M21 12c0 5-4 9-9 9s-9-4-9-9 4-9 9-9c2 0 4 1 5.5 2.5"/></svg>
+          </div>
+          <h3>Pest & Disease Alerts</h3>
+          <p>Weather-triggered alerts from 18 rules. Specific treatment plans — chemical or organic, your choice.</p>
+          <span class="feature__tag">Real-time matching</span>
+        </article>
+
+        <article class="feature feature--gold">
+          <div class="feature__ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="6" width="16" height="14" rx="2"/><path d="M4 10h16M9 14h6"/></svg>
+          </div>
+          <h3>Loans & Govt. Schemes</h3>
+          <p>EMI, DSCR, feasibility verdict. Auto-match 12 central and state schemes by your eligibility.</p>
+          <span class="feature__tag">12 schemes</span>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= SHOWCASE 1 ============= -->
+  <section class="showcase">
+    <div class="container">
+      <div class="showcase__grid">
+        <div class="showcase__media reveal">
+          <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&w=1000&q=80" alt="Farmer walking through wheat field">
+          <div class="showcase__badge">
+            <div class="showcase__badge__ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            </div>
+            <div class="showcase__badge__text">
+              <strong>20 ML features</strong>
+              Trained on real CSVs
+            </div>
+          </div>
+        </div>
+
+        <div class="showcase__content reveal">
+          <span class="eyebrow">Yield prediction</span>
+          <h2>Your soil, quantified.</h2>
+          <p>Feed in your soil NPK, pH, organic carbon, rainfall, and irrigation level — get a kg/acre yield estimate backed by 20 features and a RandomForest trained on real Indian farm history.</p>
+          <ul class="showcase__list">
+            <li>
+              <span class="showcase__list__check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              <span class="showcase__list__text"><strong>20-feature prediction</strong>NPK, pH, OC, rainfall, temp range, irrigation, season, region</span>
+            </li>
+            <li>
+              <span class="showcase__list__check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              <span class="showcase__list__text"><strong>Nutrient gap analysis</strong>See exactly how much urea, DAP, MOP to apply — in kg/acre</span>
+            </li>
+            <li>
+              <span class="showcase__list__check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              <span class="showcase__list__text"><strong>Multi-year soil projection</strong>Model nutrient depletion and legume nitrogen fixation over 3–5 years</span>
+            </li>
+          </ul>
+          <a href="dashboard.html" class="btn btn-primary showcase__cta">
+            Run a prediction
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= STATS ============= -->
+  <section class="stats" id="stats">
+    <div class="container">
+      <div class="stats__head reveal">
+        <span class="eyebrow">Real impact · real numbers</span>
+        <h2>Built on data, not guesswork</h2>
+        <p>Every recommendation is grounded in measurable history — from soil samples to mandi prices to regional yield records.</p>
+      </div>
+
+      <div class="stats__grid reveal-stagger">
+        <div class="stat">
+          <div class="stat__val" data-count="12000">0<small>+</small></div>
+          <div class="stat__lbl">Farmers served</div>
+          <div class="stat__desc">Across MP, UP, Maharashtra — kharif & rabi</div>
+        </div>
+        <div class="stat">
+          <div class="stat__val" data-count="98">0<small>%</small></div>
+          <div class="stat__lbl">Model accuracy</div>
+          <div class="stat__desc">RandomForest classifier on 45K samples</div>
+        </div>
+        <div class="stat">
+          <div class="stat__val" data-count="32">0<small>+</small></div>
+          <div class="stat__lbl">API endpoints</div>
+          <div class="stat__desc">Full REST coverage for any integration</div>
+        </div>
+        <div class="stat">
+          <div class="stat__val" data-count="45">0<small>K</small></div>
+          <div class="stat__lbl">Training rows</div>
+          <div class="stat__desc">Soil × climate × budget combinations</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= 3D SCENE ============= -->
+  <section class="scene3d" id="scene3d">
+    <div class="scene3d__wrap">
+      <div class="reveal">
+        <span class="eyebrow">Explore in 3D</span>
+        <h2 style="margin-bottom:16px;">Your farm data, rendered live.</h2>
+        <p>A real-time WebGL visualisation of our 3 pilot regions with crop markers sized by expected yield. Drag to rotate, scroll to zoom.</p>
+        <ul class="showcase__list" style="margin-top:24px;">
+          <li>
+            <span class="showcase__list__check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+            <span class="showcase__list__text"><strong>Live Three.js render</strong>Hardware-accelerated WebGL, 60 fps on any modern phone</span>
+          </li>
+          <li>
+            <span class="showcase__list__check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+            <span class="showcase__list__text"><strong>Regional markers</strong>Each pillar height represents the avg profit potential — taller means better</span>
+          </li>
+          <li>
+            <span class="showcase__list__check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+            <span class="showcase__list__text"><strong>Interactive</strong>Hover a marker to read its data, drag the globe, scroll to zoom</span>
+          </li>
+        </ul>
+      </div>
+      <div class="scene3d__canvas reveal" id="scene3dCanvas">
+        <div class="scene3d__label" id="scene3dLabel"></div>
+
+        <div class="scene3d__hud" data-no-translate>
+          <label class="scene3d__hud-row">
+            <span>View</span>
+            <select id="scene3dMode">
+              <option value="default">Default colours</option>
+              <option value="rainfall">Rainfall heatmap</option>
+              <option value="soilN">Soil N heatmap</option>
+              <option value="profit">Avg profit heatmap</option>
+              <option value="crop">Crop suitability…</option>
+            </select>
+          </label>
+          <label class="scene3d__hud-row" id="scene3dCropWrap" style="display:none;">
+            <span>Crop</span>
+            <select id="scene3dCrop"><option value="">Pick a crop…</option></select>
+          </label>
+          <div class="scene3d-legend" id="scene3dLegend"></div>
+        </div>
+
+        <aside class="scene3d-panel" id="scene3dPanel" data-no-translate>
+          <button class="scene3d-panel__close" id="scene3dPanelClose" aria-label="Close">×</button>
+          <h3 class="scene3d-panel__title">State</h3>
+          <div class="scene3d-panel__body"></div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= PROCESS ============= -->
+  <section class="process" id="how">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">How it works</span>
+        <h2>Three steps to smarter farming</h2>
+        <p>Tell us about your land, pick a season, and we'll do the rest — from crop ranking to irrigation timing.</p>
+      </div>
+
+      <div class="process__grid reveal-stagger">
+        <div class="step">
+          <div class="step__num">1</div>
+          <h3>Enter your land</h3>
+          <p>Region, area in acres, soil sample numbers. Takes less than a minute.</p>
+        </div>
+        <div class="step">
+          <div class="step__num">2</div>
+          <h3>We predict & rank</h3>
+          <p>Three ML models run in parallel — yield, prices, and crop confidence. Results in milliseconds.</p>
+        </div>
+        <div class="step">
+          <div class="step__num">3</div>
+          <h3>Act with confidence</h3>
+          <p>Get fertilizer plans, irrigation schedules, pest alerts, and sell-timing advice. All in your dashboard.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= LIVE DEMO ============= -->
+  <section class="demo" id="demo">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Try it right here</span>
+        <h2>Live crop recommender</h2>
+        <p>Pick your state, season and budget — we'll rank the three best-fit crops instantly, right on this page. No signup, no video, just the real thing.</p>
+      </div>
+
+      <div class="livedemo reveal">
+        <form class="livedemo__form" id="liveDemoForm" onsubmit="return false;">
+          <label class="livedemo__field">
+            <span>State</span>
+            <select id="ldState"></select>
+          </label>
+          <label class="livedemo__field">
+            <span>Season</span>
+            <select id="ldSeason">
+              <option value="kharif">Kharif (Jun–Oct)</option>
+              <option value="rabi">Rabi (Nov–Apr)</option>
+            </select>
+          </label>
+          <label class="livedemo__field">
+            <span>Area (acres)</span>
+            <input id="ldArea" type="number" value="4" min="0.5" step="0.5">
+          </label>
+          <label class="livedemo__field">
+            <span>Budget / acre (₹)</span>
+            <input id="ldBudget" type="number" value="15000" min="1000" step="500">
+          </label>
+          <button class="btn btn-primary livedemo__go" id="ldRun" type="button">
+            Run recommendation
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </button>
+        </form>
+
+        <div class="livedemo__result" id="ldResult" data-no-translate>
+          <div class="livedemo__empty">Choose your inputs and hit <b>Run recommendation</b> to see three ranked crops with expected profit, risk, and mandi outlook.</div>
+        </div>
+
+        <div class="livedemo__footer">
+          <span class="livedemo__note">Demo uses on-device heuristics over our crop × state dataset. The full dashboard runs three ML models and blends live mandi data.</span>
+          <a href="dashboard.html" class="livedemo__cta">Open full dashboard →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= SHOWCASE 2 ============= -->
+  <section class="showcase" style="background: var(--bg);">
+    <div class="container">
+      <div class="showcase__grid showcase__grid--reverse">
+        <div class="showcase__media reveal">
+          <img src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?auto=format&fit=crop&w=1000&q=80" alt="Farmer checking mobile phone in field">
+          <div class="showcase__badge">
+            <div class="showcase__badge__ico" style="background: var(--accent-soft); color: var(--accent);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+            <div class="showcase__badge__text">
+              <strong>₹ 48K avg</strong>
+              Extra profit per acre
+            </div>
+          </div>
+        </div>
+
+        <div class="showcase__content reveal">
+          <span class="eyebrow">Market intelligence</span>
+          <h2>Know when to sell. Know what it's worth.</h2>
+          <p>Compare live mandi prices across three regions, forecast six months ahead, and get MSP vs market guidance in real time.</p>
+          <ul class="showcase__list">
+            <li>
+              <span class="showcase__list__check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              <span class="showcase__list__text"><strong>Cross-mandi arbitrage</strong>Find the best price across Sehore, Lucknow, Pune</span>
+            </li>
+            <li>
+              <span class="showcase__list__check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              <span class="showcase__list__text"><strong>Seasonal price pattern</strong>Best month to sell based on 12-month history</span>
+            </li>
+            <li>
+              <span class="showcase__list__check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              <span class="showcase__list__text"><strong>Hold or sell advisor</strong>Expected price gain vs. storage cost, worked out in rupees</span>
+            </li>
+          </ul>
+          <a href="/docs" class="btn btn-primary showcase__cta">
+            Explore the API
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= TESTIMONIALS ============= -->
+  <section class="testimonials">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">In farmers' words</span>
+        <h2>Real kisans. Real harvests.</h2>
+      </div>
+
+      <div class="testimonials__grid reveal-stagger">
+        <article class="quote">
+          <div class="quote__stars">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+          </div>
+          <p class="quote__text">"Pichle saal wheat lagaya tha, zyada munafa nahi hua. Is baar app ne soybean suggest kiya — profit double ho gaya."</p>
+          <div class="quote__author">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=88&h=88&q=80" alt="">
+            <div class="quote__author__meta">
+              <strong>Ramesh Kumar</strong>
+              <span>Sehore, Madhya Pradesh · 4 acres</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="quote">
+          <div class="quote__stars">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+          </div>
+          <p class="quote__text">"Irrigation schedule bilkul accurate tha. Paani bachaya, yield badhi. MSP vs market comparison sabse useful feature hai."</p>
+          <div class="quote__author">
+            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=88&h=88&q=80" alt="">
+            <div class="quote__author__meta">
+              <strong>Sunita Devi</strong>
+              <span>Lucknow, UP · 8 acres</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="quote">
+          <div class="quote__stars">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+          </div>
+          <p class="quote__text">"Pest alert aaya jab temperature 32°C hua. Sifarish follow ki, cotton bacha liya. Seedha calculator ne 2 lakh bachaye."</p>
+          <div class="quote__author">
+            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=88&h=88&q=80" alt="">
+            <div class="quote__author__meta">
+              <strong>Deepak Patil</strong>
+              <span>Pune, Maharashtra · 12 acres</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= CTA ============= -->
+  <section class="cta">
+    <div class="cta__wrap reveal">
+      <h2>Ready to plan your next harvest?</h2>
+      <p>Free to try. No sign-up. Runs on real Indian farm data — straight from our CSV source of truth.</p>
+      <a href="dashboard.html" class="btn btn-light">
+        Launch the dashboard
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- ============= FOOTER ============= -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div class="footer__about">
+          <a href="#" class="logo" aria-label="Mitti Mantra home">
+            <img src="assets/logo.png" alt="Mitti Mantra — Growing the future" class="logo__img">
+          </a>
+          <p class="footer__tagline">Growing the future — AI-powered farm intelligence, built with care for Indian kisans. Open-source, data-first, and designed to work on a 2G phone.</p>
+        </div>
+
+        <div class="footer__col">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="#features">Features</a></li>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="#demo">Demo</a></li>
+            <li><a href="/docs">API</a></li>
+          </ul>
+        </div>
+
+        <div class="footer__col">
+          <h4>Data</h4>
+          <ul>
+            <li><a href="/api/crops">8 crops</a></li>
+            <li><a href="/api/regions">3 regions</a></li>
+            <li><a href="/api/ml/status">ML models</a></li>
+            <li><a href="/api/government-schemes">Schemes</a></li>
+          </ul>
+        </div>
+
+        <div class="footer__col">
+          <h4>Contact</h4>
+          <ul>
+            <li><a href="mailto:hello@mittimantra.in">hello@mittimantra.in</a></li>
+            <li><a href="#">Partner with us</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Press kit</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer__bottom">
+        <div>© 2025 Mitti Mantra · Growing the future. Built in Pune with ❤ for Bharat.</div>
+        <div class="footer__social">
+          <a href="#" aria-label="Twitter"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/></svg></a>
+          <a href="#" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.38c.6.12.83-.26.83-.58v-2c-3.34.72-4.04-1.6-4.04-1.6-.55-1.4-1.34-1.77-1.34-1.77-1.1-.74.08-.72.08-.72 1.2.1 1.84 1.24 1.84 1.24 1.08 1.85 2.83 1.32 3.52 1 .1-.78.42-1.32.76-1.62-2.67-.3-5.47-1.33-5.47-5.93 0-1.3.46-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.3-1.23 3.3-1.23.64 1.66.24 2.88.12 3.18a4.65 4.65 0 0 1 1.23 3.22c0 4.6-2.8 5.63-5.48 5.92.42.36.8 1.1.8 2.22v3.3c0 .32.22.7.84.58A12 12 0 0 0 12 .3"/></svg></a>
+          <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.56c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.95v5.65H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.55V9h3.57v11.45z"/></svg></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+  <script defer src="mm-core.js"></script>
+  <script defer src="site-ui.js"></script>
+  <script defer src="state-data.js"></script>
+  <script defer src="india-globe.js"></script>
+  <script defer src="demo-recommender.js"></script>
+  <script defer src="i18n.js"></script>
+  <script defer src="toolbar.js"></script>
+  <script defer src="chatbot.js"></script>
 </body>
 </html>

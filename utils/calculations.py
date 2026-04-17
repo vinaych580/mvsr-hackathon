@@ -80,13 +80,23 @@ def calculate_yield_kg_per_acre(
         elif any(term in v for term in ["local", "traditional", "desi"]):
             variety_factor = 0.9
 
-    # Sowing date factor: seasonal adjustment
-    # Simplified logic: apply small penalty if sowing is far from typical month
-    # This is a placeholder for more sophisticated seasonal analysis
+    # Sowing date factor: penalize late/early sowing relative to ideal window
     date_factor = 1.0
     if sowing_date:
-        # Example: just a token adjustment to show it's integrated
-        date_factor = 1.0
+        try:
+            month = int(sowing_date.split("-")[1])
+            season = crop.season.lower()
+            if "kharif" in season:
+                ideal_months = {6, 7}
+            elif "rabi" in season:
+                ideal_months = {10, 11}
+            else:
+                ideal_months = set(range(1, 13))
+            if ideal_months and month not in ideal_months:
+                gap = min(abs(month - m) for m in ideal_months)
+                date_factor = clamp(1.0 - gap * 0.06, 0.75, 1.0)
+        except (ValueError, IndexError):
+            date_factor = 1.0
 
     return round(crop.base_yield_kg_per_acre * soil_factor * climate_factor * irrigation_factor * variety_factor * date_factor, 2)
 
@@ -107,10 +117,10 @@ def calculate_risk_score_and_subscores(
     # Irrigation mitigates drought risk
     drought = clamp(drought - (25.0 * irrigation_level), 5.0, 95.0)
 
-    flood = clamp((rainfall - crop.water_requirement_mm) / 8.0, 2.0, 95.0)
+    flood = clamp((rainfall - crop.water_requirement_mm) / max(crop.water_requirement_mm, 1.0) * 100.0, 0.0, 95.0)
 
     # Heat/Pest risk
-    pest = clamp(25.0 + (avg_temp - crop.temp_max_c) * 4.0, 5.0, 95.0)
+    heat = clamp(25.0 + (avg_temp - crop.temp_max_c) * 4.0, 5.0, 95.0)
 
     # Price volatility
     price_vol = clamp(
@@ -121,12 +131,12 @@ def calculate_risk_score_and_subscores(
 
     risk_subscores = {
         "drought": round(drought, 2),
-        "pest": round(pest, 2),
+        "heat": round(heat, 2),
         "flood": round(flood, 2),
         "price_volatility": round(price_vol, 2),
     }
 
     # Unified weightage
-    risk_score = (0.35 * drought) + (0.25 * pest) + (0.20 * flood) + (0.20 * price_vol)
+    risk_score = (0.35 * drought) + (0.25 * heat) + (0.20 * flood) + (0.20 * price_vol)
 
     return round(risk_score, 2), risk_subscores

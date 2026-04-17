@@ -3,3 +3,37 @@ __pycache__/
 *.pyc
 *.pyo
 .pytest_cache/
+
+# Logs
+*.log
+*.err
+
+# Compiled binaries
+*.pyd
+*.so
+*.dll
+
+# IDEs
+.idea/
+.vscode/
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Dependency folders (if installed in root)
+bin/
+certifi/
+certifi-2026.2.25.dist-info/
+charset_normalizer/
+charset_normalizer-3.4.7.dist-info/
+dotenv/
+idna/
+idna-3.11.dist-info/
+python_dotenv-1.2.2.dist-info/
+requests/
+requests-2.33.1.dist-info/
+urllib3/
+urllib3-2.6.3.dist-info/

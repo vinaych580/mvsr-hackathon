@@ -7,3 +7,24 @@ cotton,Cotton,Kharif,1000,700,80,40,40,21,37,1900,32000,55,85
 pulses,Pulses (Chickpea/Tur),Rabi/Kharif,800,450,25,20,20,15,32,1300,17000,55,90
 groundnut,Groundnut,Kharif,1050,550,30,25,25,20,34,1400,23000,45,75
 soybean,Soybean,Kharif,1100,600,30,25,25,18,33,1400,20000,40,70
+mustard,Mustard (Sarson),Rabi,900,350,60,30,30,10,28,1400,14000,52,80
+bajra,Pearl Millet (Bajra),Kharif,850,450,40,20,20,22,38,1500,11000,22,36
+jowar,Sorghum (Jowar),Kharif/Rabi,900,500,40,25,25,20,38,1500,13000,25,42
+potato,Potato,Rabi,9000,550,80,40,100,10,26,1300,42000,10,20
+onion,Onion,Rabi,12000,650,50,30,40,13,30,1600,38000,12,28
+tomato,Tomato,Kharif/Rabi,15000,700,60,40,50,15,32,1400,45000,8,30
+chilli,Chilli,Kharif,3200,650,60,30,40,18,35,1500,52000,60,140
+turmeric,Turmeric,Kharif,9500,1200,60,30,100,20,35,2800,68000,70,120
+ginger,Ginger,Kharif,8500,1500,80,40,60,22,32,2400,95000,55,95
+banana,Banana,Annual,35000,1800,200,60,300,20,38,2800,95000,12,22
+coconut,Coconut,Perennial,11000,1200,50,40,150,22,34,1200,35000,18,28
+tea,Tea,Perennial,1400,2200,100,40,60,16,30,2200,70000,140,260
+coffee,Coffee,Perennial,900,2000,80,40,60,15,28,2100,180000,210,380
+barley,Barley,Rabi,1600,400,40,20,20,10,25,1400,14000,18,28
+sunflower,Sunflower,Kharif/Rabi,900,500,40,30,30,20,30,1500,18000,45,72
+ragi,Finger Millet (Ragi),Kharif,1400,400,30,20,20,18,35,1400,12000,30,50
+urad,Black Gram (Urad),Kharif,600,400,20,25,20,18,33,1200,16000,80,110
+moong,Green Gram (Moong),Kharif/Zaid,600,380,20,25,20,20,35,1200,18000,75,105
+mango,Mango,Perennial,8500,900,80,40,60,22,36,2600,55000,35,75
+paddy_basmati,Basmati Rice,Kharif,2200,1300,55,28,28,22,36,1900,36000,32,65
+arhar,Pigeon Pea (Arhar/Tur),Kharif,700,450,25,25,25,18,35,1400,18000,60,95

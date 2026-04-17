@@ -1,0 +1,37 @@
+crop_id,crop_name,year,season,msp_inr_per_quintal,msp_inr_per_kg
+rice,Rice (Paddy),2024,kharif,2300,23.00
+rice,Rice (Paddy),2025,kharif,2400,24.00
+wheat,Wheat,2024,rabi,2275,22.75
+wheat,Wheat,2025,rabi,2425,24.25
+maize,Maize,2024,kharif,2090,20.90
+maize,Maize,2025,kharif,2225,22.25
+sugarcane,Sugarcane,2024,annual,315,3.15
+sugarcane,Sugarcane,2025,annual,340,3.40
+cotton,Cotton (Medium Staple),2024,kharif,7121,71.21
+cotton,Cotton (Medium Staple),2025,kharif,7521,75.21
+pulses,Pulses (Tur/Arhar),2024,kharif,7000,70.00
+pulses,Pulses (Tur/Arhar),2025,kharif,7550,75.50
+groundnut,Groundnut,2024,kharif,6377,63.77
+groundnut,Groundnut,2025,kharif,6783,67.83
+soybean,Soybean,2024,kharif,4892,48.92
+soybean,Soybean,2025,kharif,5240,52.40
+mustard,Mustard (Sarson),2024,rabi,5650,56.50
+mustard,Mustard (Sarson),2025,rabi,5950,59.50
+bajra,Pearl Millet (Bajra),2024,kharif,2500,25.00
+bajra,Pearl Millet (Bajra),2025,kharif,2625,26.25
+jowar,Sorghum (Jowar),2024,kharif,3180,31.80
+jowar,Sorghum (Jowar),2025,kharif,3371,33.71
+barley,Barley,2024,rabi,1850,18.50
+barley,Barley,2025,rabi,1980,19.80
+ragi,Finger Millet (Ragi),2024,kharif,4290,42.90
+ragi,Finger Millet (Ragi),2025,kharif,4886,48.86
+sunflower,Sunflower Seed,2024,kharif,7280,72.80
+sunflower,Sunflower Seed,2025,kharif,7721,77.21
+urad,Black Gram (Urad),2024,kharif,7400,74.00
+urad,Black Gram (Urad),2025,kharif,7800,78.00
+moong,Green Gram (Moong),2024,kharif,8682,86.82
+moong,Green Gram (Moong),2025,kharif,8768,87.68
+arhar,Pigeon Pea (Arhar/Tur),2024,kharif,7550,75.50
+arhar,Pigeon Pea (Arhar/Tur),2025,kharif,8000,80.00
+paddy_basmati,Basmati Rice,2024,kharif,3700,37.00
+paddy_basmati,Basmati Rice,2025,kharif,3900,39.00
