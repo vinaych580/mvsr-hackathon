@@ -1,11 +1,16 @@
 from __future__ import annotations
 
 import csv
-from dataclasses import dataclass
 from pathlib import Path
 from statistics import mean
 from typing import Any
 
+from utils.calculations import (
+    CropParameter,
+    calculate_risk_score_and_subscores,
+    calculate_yield_kg_per_acre,
+    clamp,
+)
 
 DATASET_DIR = Path(__file__).resolve().parents[1] / "dataset"
 
@@ -15,24 +20,6 @@ _cache_yield_history: list[dict[str, str]] | None = None
 _cache_weather: dict[tuple[str, str], dict[str, str]] | None = None
 _cache_soil: dict[str, dict[str, str]] | None = None
 _cache_mandi: list[dict[str, str]] | None = None
-
-
-@dataclass
-class CropParameter:
-    crop_id: str
-    crop_name: str
-    season: str
-    base_yield_kg_per_acre: float
-    water_requirement_mm: float
-    temp_min_c: float
-    temp_max_c: float
-    avg_input_cost_inr_per_acre: float
-    mandi_price_min_inr_per_kg: float
-    mandi_price_max_inr_per_kg: float
-
-
-def _clamp(value: float, low: float, high: float) -> float:
-    return max(low, min(high, value))
 
 
 def _load_csv(file_name: str) -> list[dict[str, str]]:
@@ -60,6 +47,9 @@ def _load_crop_parameters() -> dict[str, CropParameter]:
             avg_input_cost_inr_per_acre=float(row["avg_input_cost_inr_per_acre"]),
             mandi_price_min_inr_per_kg=float(row["mandi_price_min_inr_per_kg"]),
             mandi_price_max_inr_per_kg=float(row["mandi_price_max_inr_per_kg"]),
+            npk_n_kg_per_acre=float(row["npk_n_kg_per_acre"]),
+            npk_p_kg_per_acre=float(row["npk_p_kg_per_acre"]),
+            npk_k_kg_per_acre=float(row["npk_k_kg_per_acre"]),
         )
     _cache_crop_params = data
     return data
@@ -123,31 +113,15 @@ def _historical_yield_average(crop_id: str, region_id: str, history_rows: list[d
     return None
 
 
-def _yield_weather_factor(weather: dict[str, float], crop: CropParameter) -> float:
-    rainfall_gap = abs(weather["rainfall_mm"] - crop.water_requirement_mm) / max(crop.water_requirement_mm, 1.0)
-    temperature_target = (crop.temp_min_c + crop.temp_max_c) / 2.0
-    temp_gap = abs(weather["avg_temp_c"] - temperature_target) / max(temperature_target, 1.0)
-    rainfall_factor = _clamp(1.0 - (0.7 * rainfall_gap), 0.55, 1.2)
-    temp_factor = _clamp(1.0 - (0.8 * temp_gap), 0.6, 1.15)
-    return _clamp(rainfall_factor * temp_factor, 0.45, 1.25)
-
-
-def _yield_soil_factor(soil: dict[str, float]) -> float:
-    ph_score = 1.0 - min(abs(soil["ph"] - 7.0) * 0.08, 0.35)
-    nutrient_score = _clamp(
-        (soil["n_kg_per_acre"] / 50.0 + soil["p_kg_per_acre"] / 25.0 + soil["k_kg_per_acre"] / 180.0) / 3.0,
-        0.6,
-        1.3,
-    )
-    return _clamp(ph_score * nutrient_score, 0.55, 1.3)
-
-
 def predict_yield_kg_per_acre(
     crop_id: str,
     region_id: str,
     season: str,
     weather: dict[str, float],
     soil: dict[str, float],
+    irrigation_level: float = 0.5,
+    seed_variety: str | None = None,
+    sowing_date: str | None = None,
 ) -> float:
     crop_params = _load_crop_parameters()
     history_rows = _load_yield_history()
@@ -156,10 +130,28 @@ def predict_yield_kg_per_acre(
         return 0.0
 
     historical = _historical_yield_average(crop_id, region_id, history_rows)
-    baseline = historical if historical is not None else crop.base_yield_kg_per_acre
-    weather_factor = _yield_weather_factor(weather, crop)
-    soil_factor = _yield_soil_factor(soil)
-    return round(baseline * weather_factor * soil_factor, 2)
+    
+    # We use a combined approach: historical baseline adjusted by current factors
+    # But to maintain consistency with Simulator, we should use the same logic
+    # Maybe we can use historical as a multiplier or just use the same formula
+    # Let's use the formula but scale it if historical data exists
+    
+    calc_yield = calculate_yield_kg_per_acre(
+        crop=crop,
+        soil=soil,
+        weather=weather,
+        irrigation_level=irrigation_level,
+        seed_variety=seed_variety,
+        sowing_date=sowing_date,
+    )
+    
+    if historical is not None:
+        # Adjustment factor based on history
+        historical_baseline = crop.base_yield_kg_per_acre
+        adjustment = historical / historical_baseline if historical_baseline else 1.0
+        return round(calc_yield * adjustment, 2)
+    
+    return calc_yield
 
 
 def smart_risk_score(
@@ -167,33 +159,34 @@ def smart_risk_score(
     weather: dict[str, float],
     soil: dict[str, float],
     budget_per_acre: float,
+    irrigation_level: float = 0.5,
 ) -> dict[str, float]:
     crop = _load_crop_parameters()[crop_id]
-    drought_risk = _clamp((crop.water_requirement_mm - weather["rainfall_mm"]) / max(crop.water_requirement_mm, 1.0) * 100.0, 0.0, 100.0)
-    heat_risk = _clamp((weather["avg_temp_c"] - crop.temp_max_c) * 12.0, 0.0, 100.0)
-    soil_risk = _clamp(abs(soil["ph"] - 7.0) * 20.0, 0.0, 100.0)
-    budget_risk = _clamp((crop.avg_input_cost_inr_per_acre - budget_per_acre) / max(crop.avg_input_cost_inr_per_acre, 1.0) * 100.0, 0.0, 100.0)
-    price_volatility_risk = _clamp(
-        (crop.mandi_price_max_inr_per_kg - crop.mandi_price_min_inr_per_kg) / max(crop.mandi_price_min_inr_per_kg, 1.0) * 35.0,
-        0.0,
-        100.0,
+    
+    risk_score, risk_subscores = calculate_risk_score_and_subscores(
+        crop=crop,
+        weather=weather,
+        soil=soil,
+        irrigation_level=irrigation_level,
     )
-    risk_score = (
-        0.30 * drought_risk
-        + 0.20 * heat_risk
-        + 0.20 * soil_risk
-        + 0.15 * budget_risk
-        + 0.15 * price_volatility_risk
-    )
-    confidence_score = 100.0 - risk_score
+    
+    # Budget risk is specific to ML predictor's smart_risk_score
+    budget_risk = clamp((crop.avg_input_cost_inr_per_acre - budget_per_acre) / max(crop.avg_input_cost_inr_per_acre, 1.0) * 100.0, 0.0, 100.0)
+    
+    # Re-calculate total risk including budget risk
+    # We'll give budget risk a 15% weight as before, and scale others
+    total_risk = (risk_score * 0.85) + (budget_risk * 0.15)
+    
+    confidence_score = 100.0 - total_risk
+    
     return {
-        "risk_score": round(risk_score, 2),
-        "confidence_score": round(_clamp(confidence_score, 0.0, 100.0), 2),
-        "drought_risk": round(drought_risk, 2),
-        "heat_risk": round(heat_risk, 2),
-        "soil_risk": round(soil_risk, 2),
+        "risk_score": round(total_risk, 2),
+        "confidence_score": round(clamp(confidence_score, 0.0, 100.0), 2),
+        "drought_risk": risk_subscores["drought"],
+        "heat_risk": risk_subscores["pest"],  # Aligning pest with heat as per original logic
+        "flood_risk": risk_subscores["flood"],
+        "price_volatility_risk": risk_subscores["price_volatility"],
         "budget_risk": round(budget_risk, 2),
-        "price_volatility_risk": round(price_volatility_risk, 2),
     }
 
 
@@ -305,10 +298,10 @@ def recommend_crops(
             mandi_price_per_kg=price,
         )
 
-        budget_fit = _clamp((budget_per_acre / max(crop.avg_input_cost_inr_per_acre, 1.0)) * 100.0, 0.0, 120.0)
+        budget_fit = clamp((budget_per_acre / max(crop.avg_input_cost_inr_per_acre, 1.0)) * 100.0, 0.0, 120.0)
         # Normalize ROI to 0-100 scale using 300% as the effective ceiling
-        roi_normalized = _clamp(profit["roi_percent"] / 3.0, 0.0, 100.0)
-        smart_score = _clamp(
+        roi_normalized = clamp(profit["roi_percent"] / 3.0, 0.0, 100.0)
+        smart_score = clamp(
             0.45 * roi_normalized
             + 0.25 * risk["confidence_score"]
             + 0.20 * budget_fit

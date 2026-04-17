@@ -1,4 +1,7 @@
 region_id,soil_type,ph,n_kg_per_acre,p_kg_per_acre,k_kg_per_acre,organic_carbon_percent
 telangana_medak,red_loam,6.8,42,19,165,0.58
+telangana_medak,sandy_loam,6.5,38,15,140,0.45
 mp_sehore,black_cotton,7.3,48,22,210,0.64
+mp_sehore,clay_loam,7.0,45,20,190,0.6
 punjab_ludhiana,alluvial,7.6,55,24,180,0.72
+punjab_ludhiana,sandy_clay_loam,7.4,50,22,170,0.68
