@@ -84,7 +84,8 @@
     const roi = totalCost > 0 ? (profit / totalCost) * 100 : 0;
     const breakEven = totalYield > 0 ? totalCost / totalYield : 0;
 
-    const riskScore = clamp(1 - score + (ctx.irrigation_level < 0.3 ? 0.1 : 0), 0.05, 0.95);
+    // Risk on a 0-100 scale to match the online /api/simulate response shape.
+    const riskScore = clamp((1 - score) * 100 + (ctx.irrigation_level < 0.3 ? 10 : 0), 5, 95);
 
     const nutrient = {
       nitrogen: { required: crop.n, supply: ctx.n_kg_per_acre, gap: Math.max(0, crop.n - ctx.n_kg_per_acre) },
@@ -124,7 +125,7 @@
       profit: Math.round(profit),
       roi_percent: +roi.toFixed(1),
       break_even_price_per_kg: +breakEven.toFixed(2),
-      risk_score: +riskScore.toFixed(2),
+      risk_score: +riskScore.toFixed(1),
       risk_subscores: {
         weather: +(1 - score).toFixed(2),
         price: 0.3,

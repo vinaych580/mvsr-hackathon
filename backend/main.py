@@ -12,6 +12,17 @@ import os
 # Add project root to path to import engine and utils
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+# Load .env from the project root so FIREBASE_* / DATAGOV_API_KEY are available
+# when running `uvicorn backend.main:app` locally. On Vercel the env vars come
+# from the project settings so this is a no-op there.
+try:
+    from dotenv import load_dotenv
+    _env_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env")
+    if os.path.exists(_env_path):
+        load_dotenv(_env_path)
+except Exception:
+    pass
+
 from utils.csv_cache import load as _csv_load, index_by as _csv_index, first_by as _csv_first
 from engine.simulator import simulate
 from backend.chatbot import answer as chatbot_answer
@@ -38,11 +49,14 @@ from engine.features import (
 
 app = FastAPI(title="AgriSim - Farm Intelligence Platform")
 
-# Allow CORS for local dev
+# Allow CORS for local dev.
+# NOTE: Browsers reject "Access-Control-Allow-Origin: *" together with
+# Access-Control-Allow-Credentials: true, so we disable credentials here
+# (Firebase auth uses bearer tokens on the client, not cookies).
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -219,7 +233,7 @@ async def get_regions():
     regions = []
     seen = set()
     # Known state abbreviations that should stay uppercase
-    STATE_ABBR = {"mp", "up", "tn", "mh", "kar", "guj", "pb", "ap", "tg", "ka", "wb", "or", "ka", "jk", "hp", "uk"}
+    STATE_ABBR = {"mp", "up", "tn", "mh", "kar", "guj", "pb", "ap", "tg", "ka", "wb", "or", "jk", "hp", "uk"}
     for row in soil_data:
         rid = row["region_id"]
         if rid not in seen:

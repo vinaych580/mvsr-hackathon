@@ -189,10 +189,10 @@
       `;
       navCta.prepend(userDiv);
       
-      document.getElementById('navAvatar').onclick = () => userDiv.classList.toggle('active');
-      document.addEventListener('click', (e) => {
-        if(!userDiv.contains(e.target)) userDiv.classList.remove('active');
-      });
+      document.getElementById('navAvatar').onclick = (e) => {
+        e.stopPropagation();
+        userDiv.classList.toggle('active');
+      };
       document.getElementById('btnSignOut').onclick = () => {
         getAuth()?.signOut().then(() => {
           if(window.location.pathname.includes('dashboard')) window.location.href = 'index.html';
@@ -233,6 +233,15 @@
   document.addEventListener('DOMContentLoaded', () => {
     injectStyles();
     injectModal();
+
+    // Close any open user dropdown when clicking outside. Installed ONCE
+    // (previous versions re-attached this inside updateNavUI, causing a
+    // listener leak on repeated auth-state changes).
+    document.addEventListener('click', (e) => {
+      document.querySelectorAll('.nav-user.active').forEach((nu) => {
+        if (!nu.contains(e.target)) nu.classList.remove('active');
+      });
+    });
     
     // Auth Listener
     const initializeAuth = () => {
