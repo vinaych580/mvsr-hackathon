@@ -64,8 +64,14 @@
       
       /* Nav User Avatar */
       .nav-user { position: relative; display: inline-block; }
-      .nav-avatar { width: 40px; height: 40px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: border-color 0.2s; }
-      .nav-avatar:hover { border-color: var(--brand); }
+      .nav-avatar { width: 40px; height: 40px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: border-color 0.2s, transform 0.2s; object-fit: cover; }
+      .nav-avatar:hover { border-color: var(--brand); transform: scale(1.04); }
+      .nav-avatar--initial {
+        display: inline-flex; align-items: center; justify-content: center;
+        background: linear-gradient(135deg, var(--brand) 0%, var(--brand-deep) 100%);
+        color: #fff; font-weight: 600; font-size: 1rem; font-family: inherit;
+        padding: 0; line-height: 1;
+      }
       .nav-drop {
         position: absolute; right: 0; top: 120%; background: var(--surface);
         border: 1px solid var(--border, #eee); box-shadow: 0 4px 12px rgba(0,0,0,0.1);
@@ -173,14 +179,19 @@
     existing.forEach(e => e.remove());
 
     if (currentUser) {
-      // Show User Avatar
-      const initial = currentUser.email ? currentUser.email.charAt(0).toUpperCase() : '?';
-      const pfp = currentUser.photoURL || `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 24 24' fill='%232f6b3a'><circle cx='12' cy='8' r='4'/><path d='M12 14c-4.42 0-8 2.69-8 6v2h16v-2c0-3.31-3.58-6-8-6z'/></svg>`;
-      
+      // Show User Avatar.
+      // If Firebase gave us a photoURL, render an <img>; otherwise render a
+      // pure-CSS initials badge so we never depend on inline SVG data URIs
+      // (which have bitten us before via quote-escape bugs).
+      const initial = (currentUser.displayName || currentUser.email || '?').trim().charAt(0).toUpperCase();
+      const avatarHTML = currentUser.photoURL
+        ? `<img src="${currentUser.photoURL}" alt="User" class="nav-avatar" id="navAvatar" referrerpolicy="no-referrer">`
+        : `<button type="button" class="nav-avatar nav-avatar--initial" id="navAvatar" aria-label="Account menu">${initial}</button>`;
+
       const userDiv = document.createElement('div');
       userDiv.className = 'nav-user';
       userDiv.innerHTML = `
-        <img src="${pfp}" alt="User" class="nav-avatar" id="navAvatar">
+        ${avatarHTML}
         <div class="nav-drop">
           <button onclick="window.location.href='dashboard.html'">Go to Dashboard</button>
           <hr style="margin:0; border:0; border-top:1px solid var(--border)">
@@ -188,7 +199,7 @@
         </div>
       `;
       navCta.prepend(userDiv);
-      
+
       document.getElementById('navAvatar').onclick = (e) => {
         e.stopPropagation();
         userDiv.classList.toggle('active');
