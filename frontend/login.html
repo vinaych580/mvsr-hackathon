@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign in · Mitti Mantra</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="assets/logo-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="assets/logo-192.png">
+</head>
+<body class="login-body">
+
+  <!-- NAV (minimal) -->
+  <nav class="nav scrolled" id="nav">
+    <div class="nav__wrap">
+      <a href="index.html" class="logo" aria-label="Mitti Mantra home">
+        <img src="assets/logo.png" alt="Mitti Mantra — Growing the future" class="logo__img">
+      </a>
+      <div class="nav__cta">
+        <a href="index.html" class="btn btn-ghost btn--sm">Back to site</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- LOGIN CARD -->
+  <main class="login">
+    <div class="login__card">
+      <div class="login__header">
+        <img src="assets/logo-192.png" alt="" class="login__logo">
+        <h1 class="login__title">Welcome back</h1>
+        <p class="login__sub">Sign in to access your farm dashboard, saved simulations, and more.</p>
+      </div>
+
+      <!-- Google button -->
+      <button class="login__google" id="googleBtn" type="button">
+        <svg viewBox="0 0 48 48" width="22" height="22">
+          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+          <path fill="#FBBC05" d="M10.53 28.59a14.5 14.5 0 0 1 0-9.18l-7.98-6.19a24.01 24.01 0 0 0 0 21.56l7.98-6.19z"/>
+          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+        </svg>
+        Continue with Google
+      </button>
+
+      <div class="login__divider"><span>or</span></div>
+
+      <!-- Email / Password form -->
+      <form class="login__form" id="emailForm" autocomplete="on">
+        <div class="login__field">
+          <label for="loginEmail">Email</label>
+          <input id="loginEmail" name="email" type="email" required placeholder="you@example.com" autocomplete="email">
+        </div>
+        <div class="login__field">
+          <label for="loginPass">Password</label>
+          <input id="loginPass" name="password" type="password" required placeholder="Min 6 characters" autocomplete="current-password" minlength="6">
+        </div>
+
+        <div class="login__error" id="loginError" hidden></div>
+
+        <button class="btn btn-primary login__submit" type="submit" id="submitBtn">Sign in</button>
+      </form>
+
+      <p class="login__toggle">
+        <span id="toggleText">Don't have an account?</span>
+        <button type="button" id="toggleBtn" class="login__toggle-btn">Create one</button>
+      </p>
+    </div>
+
+    <p class="login__footer">By signing in you agree to our Terms of Service and Privacy Policy.</p>
+  </main>
+
+  <!-- Firebase SDK (compat for non-bundled projects) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="auth.js"></script>
+
+  <script>
+  (function () {
+    var isSignUp = false;
+    var form      = document.getElementById('emailForm');
+    var submitBtn = document.getElementById('submitBtn');
+    var toggleBtn = document.getElementById('toggleBtn');
+    var toggleTxt = document.getElementById('toggleText');
+    var errBox    = document.getElementById('loginError');
+    var googleBtn = document.getElementById('googleBtn');
+    var passInput = document.getElementById('loginPass');
+
+    function showError(msg) {
+      errBox.textContent = msg;
+      errBox.hidden = false;
+    }
+    function clearError() { errBox.hidden = true; }
+
+    toggleBtn.addEventListener('click', function () {
+      isSignUp = !isSignUp;
+      submitBtn.textContent = isSignUp ? 'Create account' : 'Sign in';
+      toggleTxt.textContent = isSignUp ? 'Already have an account?' : "Don't have an account?";
+      toggleBtn.textContent = isSignUp ? 'Sign in' : 'Create one';
+      passInput.autocomplete = isSignUp ? 'new-password' : 'current-password';
+      clearError();
+    });
+
+    /* Google */
+    googleBtn.addEventListener('click', function () {
+      clearError();
+      googleBtn.disabled = true;
+      mmAuth.signInWithGoogle().catch(function (err) {
+        if (err.code !== 'auth/popup-closed-by-user') showError(friendlyError(err));
+        googleBtn.disabled = false;
+      });
+    });
+
+    /* Email/Password */
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      clearError();
+      var email = form.email.value.trim();
+      var pass  = form.password.value;
+      if (!email || !pass) return showError('Please fill in all fields.');
+      submitBtn.disabled = true;
+
+      var action = isSignUp ? mmAuth.signUpWithEmail(email, pass) : mmAuth.signInWithEmail(email, pass);
+      action.catch(function (err) {
+        showError(friendlyError(err));
+        submitBtn.disabled = false;
+      });
+    });
+
+    function friendlyError(err) {
+      var map = {
+        'auth/email-already-in-use':  'This email is already registered. Try signing in instead.',
+        'auth/invalid-email':         'Please enter a valid email address.',
+        'auth/user-not-found':        'No account found with this email.',
+        'auth/wrong-password':        'Incorrect password. Please try again.',
+        'auth/weak-password':         'Password should be at least 6 characters.',
+        'auth/too-many-requests':     'Too many attempts. Please try again later.',
+        'auth/invalid-credential':    'Invalid email or password.',
+        'auth/network-request-failed':'Network error. Check your connection.'
+      };
+      return map[err.code] || err.message || 'Something went wrong. Please try again.';
+    }
+  })();
+  </script>
+</body>
+</html>

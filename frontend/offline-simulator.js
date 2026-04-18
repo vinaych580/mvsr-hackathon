@@ -87,23 +87,38 @@
     // Risk on a 0-100 scale to match the online /api/simulate response shape.
     const riskScore = clamp((1 - score) * 100 + (ctx.irrigation_level < 0.3 ? 10 : 0), 5, 95);
 
+    // Match the server's nutrient_analysis shape so the dashboard renderer
+    // (which reads n_available / n_required / n_deficit + p_* + k_*) works offline too.
+    const nAvail = ctx.n_kg_per_acre;
+    const pAvail = +soil.p_kg_per_acre || 20;
+    const kAvail = +soil.k_kg_per_acre || 35;
     const nutrient = {
-      nitrogen: { required: crop.n, supply: ctx.n_kg_per_acre, gap: Math.max(0, crop.n - ctx.n_kg_per_acre) },
-      phosphorus: { required: crop.p, supply: +soil.p_kg_per_acre || 20, gap: Math.max(0, crop.p - (+soil.p_kg_per_acre || 20)) },
-      potassium: { required: crop.k, supply: +soil.k_kg_per_acre || 35, gap: Math.max(0, crop.k - (+soil.k_kg_per_acre || 35)) },
+      n_available: +nAvail.toFixed(1),
+      p_available: +pAvail.toFixed(1),
+      k_available: +kAvail.toFixed(1),
+      n_required: crop.n,
+      p_required: crop.p,
+      k_required: crop.k,
+      n_deficit: +Math.max(0, crop.n - nAvail).toFixed(1),
+      p_deficit: +Math.max(0, crop.p - pAvail).toFixed(1),
+      k_deficit: +Math.max(0, crop.k - kAvail).toFixed(1),
     };
 
-    // Sensitivity matrix (5×5) across ±20% yield and price.
+    // Sensitivity matrix (5×5) across ±20% yield and price. Keys mirror
+    // engine.simulator's projected_profit / projected_roi_pct shape.
     const steps = [-20, -10, 0, 10, 20];
     const sensitivity = [];
     for (const yPct of steps) {
       for (const pPct of steps) {
         const adjYield = totalYield * (1 + yPct / 100);
         const adjPrice = mandi * (1 + pPct / 100);
+        const projProfit = adjYield * adjPrice - totalCost;
+        const projRoi = totalCost > 0 ? (projProfit / totalCost) * 100 : 0;
         sensitivity.push({
           yield_change_pct: yPct,
           price_change_pct: pPct,
-          profit: Math.round(adjYield * adjPrice - totalCost),
+          projected_profit: Math.round(projProfit),
+          projected_roi_pct: +projRoi.toFixed(1),
         });
       }
     }
@@ -129,9 +144,14 @@
       risk_subscores: {
         weather: +(1 - score).toFixed(2),
         price: 0.3,
-        nutrient: +clamp(nutrient.nitrogen.gap / crop.n, 0, 1).toFixed(2),
+        nutrient: +clamp(nutrient.n_deficit / crop.n, 0, 1).toFixed(2),
       },
-      water_efficiency: +(yieldKgAcre / Math.max(1, crop.water_mm)).toFixed(2),
+      water_efficiency: {
+        // Dashboard reads .water_per_kg_yield_liters and .irrigation_coverage_percent.
+        // 1 mm of water over 1 acre ≈ 4047 L, so convert crop water need → litres per kg yield.
+        water_per_kg_yield_liters: Math.round((crop.water_mm * 4047) / Math.max(1, yieldKgAcre)),
+        irrigation_coverage_percent: Math.round(clamp(ctx.irrigation_level * 100, 0, 100)),
+      },
       nutrient_analysis: nutrient,
       sensitivity,
       assumptions: [

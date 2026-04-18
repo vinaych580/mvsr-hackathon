@@ -33,7 +33,7 @@
     </div>
   </nav>
 
-  <main class="dashx">
+  <main class="dashx auth-pending">
     <!-- Auto-injected when a farm boundary was drawn on farm-boundary.html -->
     <div id="farmPickup" class="farm-pickup" hidden></div>
     <div class="dashx__wrap">
@@ -480,6 +480,12 @@
       </div>
     </div>
   </footer>
+
+  <!-- Firebase Auth -->
+  <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script defer src="firebase-config.js"></script>
+  <script defer src="auth.js"></script>
 
   <!-- `defer` preserves execution order AFTER HTML parsing completes.
        This unblocks rendering while keeping mm-core → dashboard → mm-enhance ordering intact. -->

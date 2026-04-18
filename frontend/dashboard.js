@@ -1053,7 +1053,7 @@
       out.innerHTML = `
         <div class="kpi-grid">
           <div class="kpi ${cls}"><div class="kpi__lbl">Verdict</div>
-            <div class="kpi__val" style="font-size:1.1rem;">${r.verdict.split('—')[0].trim()}</div>
+            <div class="kpi__val" style="font-size:1.1rem;">${((r.verdict || '').split('—')[0].trim()) || '—'}</div>
             <div class="kpi__sub">DSCR ${FIX(dscr, 2)}</div></div>
           <div class="kpi"><div class="kpi__lbl">Monthly EMI</div>
             <div class="kpi__val">${INR(r.emi)}</div></div>

@@ -33,7 +33,7 @@
     </div>
   </nav>
 
-  <main class="farmmap">
+  <main class="farmmap auth-pending">
     <div class="farmmap__wrap">
       <aside class="farmmap__panel">
         <span class="eyebrow">Field mapping</span>
@@ -64,6 +64,12 @@
       <div class="farmmap__map" id="farmMap"></div>
     </div>
   </main>
+
+  <!-- Firebase Auth -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="auth.js"></script>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js" crossorigin=""></script>
