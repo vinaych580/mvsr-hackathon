@@ -142,7 +142,7 @@
   .mm-farm-bar{position:sticky;top:60px;z-index:40;background:linear-gradient(135deg,#f4f9f0,#eaf3ea);
     border:1px solid #d7e6d1;border-radius:14px;padding:10px 14px;margin:12px 0 16px;
     display:flex;gap:10px;align-items:center;flex-wrap:wrap;box-shadow:0 2px 8px rgba(0,0,0,.04);
-    font-family:Inter,system-ui,sans-serif;}
+    font-family:Inter,system-ui,sans-serif;grid-column:1 / -1;}
   .mm-farm-bar__lbl{font-size:.72rem;font-weight:700;color:#1b5e20;letter-spacing:.1em;
     text-transform:uppercase;margin-right:4px;display:flex;align-items:center;gap:6px;}
   .mm-farm-bar__field{display:flex;flex-direction:column;gap:2px;min-width:130px;}

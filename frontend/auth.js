@@ -175,7 +175,7 @@
     if (currentUser) {
       // Show User Avatar
       const initial = currentUser.email ? currentUser.email.charAt(0).toUpperCase() : '?';
-      const pfp = currentUser.photoURL || `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="%232f6b3a"><circle cx="12" cy="8" r="4"/><path d="M12 14c-4.42 0-8 2.69-8 6v2h16v-2c0-3.31-3.58-6-8-6z"/></svg>`;
+      const pfp = currentUser.photoURL || `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 24 24' fill='%232f6b3a'><circle cx='12' cy='8' r='4'/><path d='M12 14c-4.42 0-8 2.69-8 6v2h16v-2c0-3.31-3.58-6-8-6z'/></svg>`;
       
       const userDiv = document.createElement('div');
       userDiv.className = 'nav-user';
@@ -229,16 +229,15 @@
     isReady: () => authReady
   };
 
-  // Wait for DOM
+  // Wait for DOM and Firebase
   document.addEventListener('DOMContentLoaded', () => {
     injectStyles();
     injectModal();
     
     // Auth Listener
-    const checkAuth = setInterval(() => {
+    const initializeAuth = () => {
       const auth = getAuth();
       if (auth) {
-        clearInterval(checkAuth);
         auth.onAuthStateChanged(user => {
           authReady = true;
           currentUser = user;
@@ -250,7 +249,13 @@
           window.dispatchEvent(new CustomEvent('mitti-auth-state', { detail: { user } }));
         });
       }
-    }, 100);
+    };
+    
+    if (window.MittiFirebase && window.MittiFirebase.auth) {
+      initializeAuth();
+    } else {
+      window.addEventListener('mitti-firebase-ready', initializeAuth);
+    }
   });
 
 })();
