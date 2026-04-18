@@ -1252,3 +1252,196 @@ section { padding: clamp(72px, 10vw, 140px) 0; position: relative; }
   .livedemo__summary { grid-template-columns: 1fr 1fr; }
   .livedemo__cards { grid-template-columns: 1fr; }
 }
+
+/* ================================================================
+   PREMIUM POLISH LAYER  (v14 — Apr 2026)
+   Micro-interactions, perceived-performance, motion refinements,
+   and accessibility niceties. Layered on top of the base sheet so
+   nothing above is overridden destructively.
+   ================================================================ */
+
+/* ---- Reduced-motion safety net ---- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---- Global focus rings ---- */
+:where(button, a, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* ---- Buttons: press feedback + sheen ---- */
+.btn { will-change: transform; position: relative; overflow: hidden; }
+.btn:active { transform: translateY(0) scale(.97); transition-duration: .12s; }
+.btn-primary::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,.25) 50%, transparent 70%);
+  transform: translateX(-100%); transition: transform .7s var(--ease);
+  pointer-events: none;
+}
+.btn-primary:hover::after { transform: translateX(100%); }
+
+/* ---- Sidebar: animated active bar + slide-in on hover ---- */
+.sidebar__btn {
+  position: relative;
+  transition: background .25s var(--ease), color .25s var(--ease),
+              padding-left .25s var(--ease);
+}
+.sidebar__btn::before {
+  content: ''; position: absolute; left: 4px; top: 10px; bottom: 10px;
+  width: 3px; border-radius: 3px; background: var(--brand);
+  transform: scaleY(0); transform-origin: center;
+  transition: transform .3s var(--ease);
+}
+.sidebar__btn.active::before { transform: scaleY(1); }
+.sidebar__btn:hover { padding-left: 16px; }
+.sidebar__btn.active { padding-left: 16px; }
+
+/* ---- KPIs: staggered entrance + hover lift ---- */
+.kpi {
+  transition: transform .35s var(--ease), box-shadow .35s var(--ease);
+  animation: kpiPop .5s var(--ease) both;
+}
+.kpi:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(29,26,21,.08); }
+@keyframes kpiPop {
+  from { opacity: 0; transform: translateY(10px) scale(.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.kpi-grid > .kpi:nth-child(1) { animation-delay: .02s; }
+.kpi-grid > .kpi:nth-child(2) { animation-delay: .08s; }
+.kpi-grid > .kpi:nth-child(3) { animation-delay: .14s; }
+.kpi-grid > .kpi:nth-child(4) { animation-delay: .20s; }
+.kpi-grid > .kpi:nth-child(5) { animation-delay: .26s; }
+.kpi-grid > .kpi:nth-child(6) { animation-delay: .32s; }
+
+/* ---- Tool panels: smoother entry ---- */
+.tool.active { animation: toolIn .45s var(--ease); }
+
+/* ---- List rows: gentle slide-on-hover ---- */
+.list-row {
+  transition: background .25s var(--ease), transform .25s var(--ease),
+              box-shadow .25s var(--ease);
+  border-radius: var(--r-sm);
+}
+.list-row:hover {
+  background: var(--bg-soft);
+  transform: translateX(3px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ---- Loading: premium spinner + skeleton bars ---- */
+.loading {
+  flex-direction: column; padding: 40px 20px;
+  animation: fadeIn .3s var(--ease);
+}
+.loading::after {
+  content: ''; width: 80%; max-width: 360px; height: 10px; border-radius: 6px;
+  margin-top: 14px;
+  background: linear-gradient(90deg,
+    rgba(29,26,21,.06) 0%, rgba(29,26,21,.12) 50%, rgba(29,26,21,.06) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ---- Chart containers: fade-in-up ---- */
+.chart-box, .chart-grid > * {
+  animation: fadeInUp .55s var(--ease) both;
+  animation-delay: .1s;
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- Alerts: softer entrance ---- */
+.alert { animation: fadeInUp .4s var(--ease) both; }
+
+/* ---- Form fields: focus accent ---- */
+.field input, .field select, .field textarea {
+  transition: border-color .25s var(--ease), box-shadow .25s var(--ease),
+              background .25s var(--ease);
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  box-shadow: 0 0 0 3px rgba(47,107,58,.15);
+  outline: none;
+}
+
+/* ---- Nav: lift shadow + subtle scale on logo hover ---- */
+.nav.scrolled { box-shadow: 0 4px 24px rgba(29,26,21,.07); }
+.logo__img { transition: transform .35s var(--ease); }
+.logo:hover .logo__img { transform: scale(1.04); }
+
+/* ---- Auth modal polish ---- */
+.auth-modal { backdrop-filter: blur(6px) saturate(120%);
+              -webkit-backdrop-filter: blur(6px) saturate(120%); }
+.auth-card { animation: modalIn .38s var(--ease); }
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(28px) scale(.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.btn-google { position: relative; overflow: hidden; }
+.btn-google::after {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(circle at var(--mx,50%) var(--my,50%),
+              rgba(47,107,58,.08), transparent 60%);
+  opacity: 0; transition: opacity .3s var(--ease);
+  pointer-events: none;
+}
+.btn-google:hover::after { opacity: 1; }
+
+/* ---- Farm-profile bar: focus-within glow ---- */
+.mm-farm-bar {
+  transition: box-shadow .4s var(--ease), border-color .4s var(--ease);
+}
+.mm-farm-bar:focus-within {
+  box-shadow: 0 0 0 3px rgba(47,107,58,.18), 0 6px 18px rgba(29,26,21,.08);
+  border-color: #b9d4b9;
+}
+
+/* ---- Chatbot panel: gentler entry ---- */
+.mm-chat-panel.open { animation: chatIn .3s var(--ease); }
+@keyframes chatIn {
+  from { opacity: 0; transform: translateY(12px) scale(.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ---- Toast: smoother slide ---- */
+.mm-toast { transition: opacity .3s var(--ease), transform .4s var(--ease); }
+
+/* ---- Sidebar: sticky header subtle border ---- */
+.sidebar { scrollbar-width: thin; scrollbar-color: rgba(29,26,21,.15) transparent; }
+.sidebar::-webkit-scrollbar { width: 6px; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(29,26,21,.15); border-radius: 3px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+
+/* ---- Chip / suggestion pill hover ---- */
+.chip {
+  transition: transform .2s var(--ease), background .2s var(--ease),
+              color .2s var(--ease), box-shadow .2s var(--ease);
+}
+.chip:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+
+/* ---- Scrollbar (global, subtle) ---- */
+html { scroll-padding-top: calc(var(--nav-h) + 16px); }
+
+/* ---- Selection color ---- */
+::selection { background: rgba(47,107,58,.22); color: var(--ink); }
+
+/* ---- Print: clean ---- */
+@media print {
+  .mm-farm-bar, .sidebar, .nav, .footer,
+  .mm-chat-fab, .mm-chat-panel, .mm-tools-fab, .mm-tools-pop { display: none !important; }
+  .tool { break-inside: avoid; box-shadow: none !important; border: 1px solid #ddd; }
+}
