@@ -1,29 +1,20 @@
-.env
-__pycache__/
+# Vercel ignore — keep the deployment bundle lean
+.git
+__pycache__
 *.pyc
 *.pyo
-.pytest_cache/
-
-# Logs
-*.log
-*.err
-
-# Compiled binaries
 *.pyd
 *.so
 *.dll
-
-# IDEs
-.idea/
-.vscode/
-
-# Virtual environments
+.pytest_cache
 venv/
 .venv/
-env/
-ENV/
-
-# Dependency folders (if installed in root)
+.idea/
+.vscode/
+*.log
+*.err
+docs/
+tests/
 bin/
 certifi/
 certifi-2026.2.25.dist-info/
@@ -37,5 +28,3 @@ requests/
 requests-2.33.1.dist-info/
 urllib3/
 urllib3-2.6.3.dist-info/
-
-.vercel

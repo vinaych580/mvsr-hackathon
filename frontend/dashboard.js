@@ -14,6 +14,76 @@
   const PCT = n => FIX(n, 1) + '%';
   const MONTH_NAMES = ['—','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
+  // Auth Guard
+  window.addEventListener('mitti-auth-state', (e) => {
+    const user = e.detail.user;
+    if (!user) {
+      // Redirect to landing page if not logged in
+      window.location.href = 'index.html';
+    } else {
+      // Load history when user is authenticated
+      if (window.MittiUserData) {
+         window.MittiUserData.getHistory(user).then(renderHistory);
+      }
+    }
+  });
+
+  // Auto-save simulations to Firestore
+  window.addEventListener('mitti-api-success', (e) => {
+    const { url, opts, data } = e.detail;
+    if (!window.MittiAuth || !window.MittiUserData) return;
+    const user = window.MittiAuth.getUser();
+    if (!user) return; // Only save if logged in
+
+    let toolName = null;
+    let inputs = {};
+    if (url.includes('/api/simulate')) toolName = 'simulate';
+    else if (url.includes('/api/recommend')) toolName = 'recommend';
+    else if (url.includes('/api/rotation-plan')) toolName = 'rotation';
+    else if (url.includes('/api/price-forecast')) toolName = 'forecast';
+
+    if (toolName) {
+       if (opts.body) {
+         try { inputs = JSON.parse(opts.body); } catch(e){}
+       }
+       window.MittiUserData.saveSimulation(user, toolName, inputs, data).then(() => {
+         // Refresh history after save
+         window.MittiUserData.getHistory(user).then(renderHistory);
+       });
+    }
+  });
+
+  // Render history into the sidebar (placeholder string for now)
+  function renderHistory(simulations) {
+    let histList = document.getElementById('historyList');
+    if (!histList) {
+      const aside = document.querySelector('.sidebar');
+      if (aside) {
+        aside.insertAdjacentHTML('beforeend', `
+          <div class="sidebar__group">
+            <div class="sidebar__label">Simulation History</div>
+            <div id="historyList" style="padding: 0 16px; display:flex; flex-direction:column; gap:8px;"></div>
+          </div>
+        `);
+        histList = document.getElementById('historyList');
+      }
+    }
+    if (!histList) return;
+    
+    if (!simulations.length) {
+      histList.innerHTML = '<div style="font-size:0.8rem; color:var(--ink-faint);">No past simulations</div>';
+      return;
+    }
+    
+    histList.innerHTML = simulations.map(sim => `
+      <div style="background:var(--bg-soft); padding:8px 12px; border-radius:6px; font-size:0.8rem;">
+        <strong style="display:block; color:var(--ink); text-transform:capitalize;">${sim.tool}</strong>
+        <span style="color:var(--ink-soft);">${sim.result.preview || 'Done'}</span>
+      </div>
+    `).join('');
+  }
+
+
   const CROP_LABELS = {
     rice: 'Rice · Dhaan', wheat: 'Wheat · Gehun', maize: 'Maize · Makka',
     sugarcane: 'Sugarcane · Ganna', cotton: 'Cotton · Kapas', pulses: 'Pulses · Dal',
@@ -114,14 +184,27 @@
         try { msg = (await res.json()).detail || res.statusText; } catch { msg = res.statusText; }
         throw new Error(`${res.status} · ${msg}`);
       }
-      return res.json();
+      const data = await res.json();
+      // Auto-save logic hooks into this event
+      window.dispatchEvent(new CustomEvent('mitti-api-success', { detail: { url, opts, data } }));
+      return data;
     } catch (err) {
       // Network-level failure: try the offline fallback for key routes.
       const offline = window.AgriSimOffline;
       const body = opts.body ? tryParseJSON(opts.body) : null;
       if (offline) {
-        if (url.includes('/api/simulate') && body)  { flashOfflineBanner(); return offline.simulate(body); }
-        if (url.includes('/api/recommend') && body) { flashOfflineBanner(); return offline.recommend(body); }
+        if (url.includes('/api/simulate') && body)  { 
+          flashOfflineBanner(); 
+          const data = offline.simulate(body);
+          window.dispatchEvent(new CustomEvent('mitti-api-success', { detail: { url, opts, data } }));
+          return data;
+        }
+        if (url.includes('/api/recommend') && body) { 
+          flashOfflineBanner(); 
+          const data = offline.recommend(body);
+          window.dispatchEvent(new CustomEvent('mitti-api-success', { detail: { url, opts, data } }));
+          return data;
+        }
       }
       throw err;
     }
