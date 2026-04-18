@@ -1383,24 +1383,6 @@ section { padding: clamp(72px, 10vw, 140px) 0; position: relative; }
 .logo__img { transition: transform .35s var(--ease); }
 .logo:hover .logo__img { transform: scale(1.04); }
 
-/* ---- Auth modal polish ---- */
-.auth-modal { backdrop-filter: blur(6px) saturate(120%);
-              -webkit-backdrop-filter: blur(6px) saturate(120%); }
-.auth-card { animation: modalIn .38s var(--ease); }
-@keyframes modalIn {
-  from { opacity: 0; transform: translateY(28px) scale(.96); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
-}
-.btn-google { position: relative; overflow: hidden; }
-.btn-google::after {
-  content: ''; position: absolute; inset: 0;
-  background: radial-gradient(circle at var(--mx,50%) var(--my,50%),
-              rgba(47,107,58,.08), transparent 60%);
-  opacity: 0; transition: opacity .3s var(--ease);
-  pointer-events: none;
-}
-.btn-google:hover::after { opacity: 1; }
-
 /* ---- Farm-profile bar: focus-within glow ---- */
 .mm-farm-bar {
   transition: box-shadow .4s var(--ease), border-color .4s var(--ease);
