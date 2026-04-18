@@ -6,7 +6,7 @@
      • Network-only for API calls to the backend.
 */
 
-const VERSION = 'mittimantra-v17';
+const VERSION = 'mittimantra-v18';
 const CORE = [
   './',
   './index.html',
@@ -28,9 +28,6 @@ const CORE = [
   './mm-core.js',
   './mm-enhance.js',
   './chatbot.js',
-  './firebase-config.js',
-  './user-data.js',
-  './auth.js',
   './manifest.webmanifest'
 ];
 

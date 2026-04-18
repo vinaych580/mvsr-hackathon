@@ -12,7 +12,7 @@ import os
 # Add project root to path to import engine and utils
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-# Load .env from the project root so FIREBASE_* / DATAGOV_API_KEY are available
+# Load .env from the project root so DATAGOV_API_KEY is available
 # when running `uvicorn backend.main:app` locally. On Vercel the env vars come
 # from the project settings so this is a no-op there.
 try:
@@ -51,8 +51,7 @@ app = FastAPI(title="AgriSim - Farm Intelligence Platform")
 
 # Allow CORS for local dev.
 # NOTE: Browsers reject "Access-Control-Allow-Origin: *" together with
-# Access-Control-Allow-Credentials: true, so we disable credentials here
-# (Firebase auth uses bearer tokens on the client, not cookies).
+# Access-Control-Allow-Credentials: true, so we disable credentials here.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -646,22 +645,6 @@ async def chat(req: ChatRequest):
         return chatbot_answer(req.message, req.context or {})
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-@app.get("/api/firebase-config")
-def get_firebase_config():
-    """
-    Serves the Firebase configuration so it doesn't need to be hardcoded in the frontend.
-    These values should be set in a local .env file or Vercel Environment Variables.
-    """
-    return {
-        "apiKey": os.environ.get("FIREBASE_API_KEY", ""),
-        "authDomain": os.environ.get("FIREBASE_AUTH_DOMAIN", ""),
-        "projectId": os.environ.get("FIREBASE_PROJECT_ID", ""),
-        "storageBucket": os.environ.get("FIREBASE_STORAGE_BUCKET", ""),
-        "messagingSenderId": os.environ.get("FIREBASE_MESSAGING_SENDER_ID", ""),
-        "appId": os.environ.get("FIREBASE_APP_ID", ""),
-        "measurementId": os.environ.get("FIREBASE_MEASUREMENT_ID", "")
-    }
 
 # Mount frontend files at /
 frontend_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "frontend")
