@@ -1,5 +1,4 @@
 .env
-frontend/firebase-config.js
 __pycache__/
 *.pyc
 *.pyo

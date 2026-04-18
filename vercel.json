@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "buildCommand": "node scripts/gen-firebase-config.js",
   "builds": [
     {
       "src": "api/index.py",
