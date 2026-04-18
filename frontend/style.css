@@ -1445,3 +1445,57 @@ html { scroll-padding-top: calc(var(--nav-h) + 16px); }
   .mm-chat-fab, .mm-chat-panel, .mm-tools-fab, .mm-tools-pop { display: none !important; }
   .tool { break-inside: avoid; box-shadow: none !important; border: 1px solid #ddd; }
 }
+
+/* ================================================================
+   OVERFLOW & DATA-FIDELITY GUARDS  (v15 — Apr 2026)
+   Prevents clipped text, long numbers escaping their container,
+   and signals when a rounded display has an exact value on hover.
+   ================================================================ */
+
+/* ---- Long currency values in list rows: wrap gracefully ---- */
+.list-row__val { min-width: 0; max-width: 45%; white-space: nowrap; }
+@media (max-width: 520px) {
+  .list-row__val { white-space: normal; max-width: 55%; }
+}
+
+/* ---- Tables inside outputs get a scroll rail if they exceed width ---- */
+.output table {
+  display: block; overflow-x: auto;
+  max-width: 100%; -webkit-overflow-scrolling: touch;
+  border-collapse: collapse;
+}
+.output table thead, .output table tbody, .output table tr { width: 100%; }
+
+/* ---- KPI: keep values on one logical line until they genuinely need to wrap ---- */
+.kpi__val {
+  display: flex; align-items: baseline; flex-wrap: wrap;
+  column-gap: 4px; row-gap: 2px;
+}
+.kpi__val > span { flex-shrink: 0; }
+
+/* ---- Tooltip affordance for rounded figures (span[title] inside .kpi__val) ---- */
+.kpi__val span[title] {
+  border-bottom: 1px dotted rgba(29,26,21,.28);
+  cursor: help;
+}
+.kpi__val span[title]:hover { border-bottom-color: var(--brand); }
+
+/* ---- Sidebar button text: ellipsis fallback on very narrow sidebars ---- */
+.sidebar__btn { min-width: 0; }
+.sidebar__btn > span, .sidebar__btn {
+  overflow: hidden; text-overflow: ellipsis;
+}
+
+/* ---- Alert body: long trigger/current strings wrap ---- */
+.alert__body, .alert__body p { overflow-wrap: anywhere; word-break: break-word; }
+
+/* ---- Chip labels: never overflow ---- */
+.chip { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ---- Form fields: prevent long select values from pushing layout ---- */
+.field select, .field input { min-width: 0; width: 100%; }
+
+/* ---- Chat message table: scrollable ---- */
+.mm-msg { max-width: 85%; overflow-wrap: anywhere; word-break: break-word; }
+.mm-msg table { display: block; overflow-x: auto; max-width: 100%; }
+

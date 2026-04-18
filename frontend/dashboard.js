@@ -10,8 +10,17 @@
   const $  = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const INR = n => '₹' + Math.round(Number(n) || 0).toLocaleString('en-IN');
+  // For per-kg / per-unit prices where rounding to ₹ would lose meaningful precision.
+  const INR2 = n => '₹' + (Number(n) || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const FIX = (n, d = 1) => (Number(n) || 0).toFixed(d);
   const PCT = n => FIX(n, 1) + '%';
+  // Wrap a rounded display with a native title tooltip showing the raw value,
+  // so "actual vs displayed" never drifts for precision-sensitive figures.
+  const TT = (raw, display) => {
+    const r = Number(raw);
+    if (!isFinite(r)) return display;
+    return `<span title="Exact: ${r.toLocaleString('en-IN', { maximumFractionDigits: 4 })}">${display}</span>`;
+  };
   const MONTH_NAMES = ['—','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
   // Auth Guard
@@ -301,7 +310,7 @@
           <div class="kpi"><div class="kpi__lbl">Predicted yield</div>
             <div class="kpi__val">${Math.round(top.predicted_yield_kg_per_acre)} <span style="font-size:.5em;color:var(--ink-faint)">kg/ac</span></div></div>
           <div class="kpi kpi--good"><div class="kpi__lbl">Profit (${area} ac)</div>
-            <div class="kpi__val">${INR(top.expected_profit)}</div>
+            <div class="kpi__val">${TT(top.expected_profit, INR(top.expected_profit))}</div>
             <div class="kpi__sub">ROI ${PCT(top.roi_percent)}</div></div>
           <div class="kpi kpi--info"><div class="kpi__lbl">ML confidence</div>
             <div class="kpi__val">${PCT((top.ml_confidence || 0) * 100)}</div>
@@ -440,12 +449,12 @@
             <div class="kpi__val">${Math.round(totalYield)} <span style="font-size:.5em">kg</span></div>
             <div class="kpi__sub">${Math.round(yieldPerAc)} kg/ac</div></div>
           <div class="kpi"><div class="kpi__lbl">Revenue</div>
-            <div class="kpi__val">${INR(r.revenue || 0)}</div></div>
+            <div class="kpi__val">${TT(r.revenue, INR(r.revenue || 0))}</div></div>
           <div class="kpi"><div class="kpi__lbl">Total cost</div>
-            <div class="kpi__val">${INR(r.total_cost || 0)}</div>
-            <div class="kpi__sub">Breakeven ₹${FIX(r.break_even_price_per_kg,1)}/kg</div></div>
+            <div class="kpi__val">${TT(r.total_cost, INR(r.total_cost || 0))}</div>
+            <div class="kpi__sub">Breakeven ₹${FIX(r.break_even_price_per_kg,2)}/kg</div></div>
           <div class="kpi kpi--good"><div class="kpi__lbl">Profit</div>
-            <div class="kpi__val">${INR(r.profit || 0)}</div>
+            <div class="kpi__val">${TT(r.profit, INR(r.profit || 0))}</div>
             <div class="kpi__sub">ROI ${PCT(r.roi_percent || 0)}</div></div>
           <div class="kpi kpi--warn"><div class="kpi__lbl">Risk score</div>
             <div class="kpi__val">${Math.round(r.risk_score || 0)}<span style="font-size:.5em;color:var(--ink-faint)">/100</span></div></div>
@@ -557,7 +566,7 @@
             <div class="kpi__val" style="font-size:1.15rem;">${cropLabel(best.kharif_crop)} → ${cropLabel(best.rabi_crop)}</div>
             <div class="kpi__sub">Score ${FIX(best.rotation_score || best.diversity_score || 0, 1)}</div></div>
           <div class="kpi"><div class="kpi__lbl">Annual profit</div>
-            <div class="kpi__val">${INR(best.annual_profit)}</div></div>
+            <div class="kpi__val">${TT(best.annual_profit, INR(best.annual_profit))}</div></div>
           <div class="kpi kpi--warn"><div class="kpi__lbl">Avg risk</div>
             <div class="kpi__val">${Math.round(best.avg_risk_score || 0)}<span style="font-size:.5em">/100</span></div></div>
         </div>
@@ -639,9 +648,9 @@
       out.innerHTML = `
         <div class="kpi-grid">
           <div class="kpi"><div class="kpi__lbl">Current price</div>
-            <div class="kpi__val">${INR(data.current_price)}<span style="font-size:.5em">/kg</span></div></div>
+            <div class="kpi__val">${TT(data.current_price, INR2(data.current_price))}<span style="font-size:.5em">/kg</span></div></div>
           <div class="kpi kpi--info"><div class="kpi__lbl">+${months} mo forecast</div>
-            <div class="kpi__val">${INR(lastFcst)}<span style="font-size:.5em">/kg</span></div>
+            <div class="kpi__val">${TT(lastFcst, INR2(lastFcst))}<span style="font-size:.5em">/kg</span></div>
             <div class="kpi__sub"><span class="chip ${deltaPct >= 0 ? 'chip--green' : 'chip--red'}">${deltaPct >= 0 ? '+' : ''}${FIX(deltaPct, 1)}% vs now</span></div></div>
           <div class="kpi ${data.trend_direction === 'rising' ? 'kpi--good' : data.trend_direction === 'falling' ? 'kpi--warn' : 'kpi--info'}">
             <div class="kpi__lbl">Trend</div>
@@ -718,12 +727,12 @@
       out.innerHTML = `
         <div class="kpi-grid">
           <div class="kpi"><div class="kpi__lbl">MSP (${r.msp_year})</div>
-            <div class="kpi__val">${INR(r.msp_inr_per_kg)}<span style="font-size:.5em">/kg</span></div></div>
+            <div class="kpi__val">${TT(r.msp_inr_per_kg, INR2(r.msp_inr_per_kg))}<span style="font-size:.5em">/kg</span></div></div>
           <div class="kpi kpi--info"><div class="kpi__lbl">Current mandi</div>
-            <div class="kpi__val">${INR(r.current_mandi_price)}<span style="font-size:.5em">/kg</span></div>
+            <div class="kpi__val">${TT(r.current_mandi_price, INR2(r.current_mandi_price))}<span style="font-size:.5em">/kg</span></div>
             <div class="kpi__sub"><span class="chip ${cls}">${r.mandi_above_msp ? '+' : ''}${FIX(gap, 1)}% vs MSP</span></div></div>
           <div class="kpi"><div class="kpi__lbl">6-month avg</div>
-            <div class="kpi__val">${INR(r.avg_mandi_6m)}<span style="font-size:.5em">/kg</span></div></div>
+            <div class="kpi__val">${TT(r.avg_mandi_6m, INR2(r.avg_mandi_6m))}<span style="font-size:.5em">/kg</span></div></div>
         </div>
         <div class="chart-box">
           <div class="chart-box__title">Price comparison</div>
@@ -773,14 +782,14 @@
           <div class="kpi ${cls}"><div class="kpi__lbl">Action</div>
             <div class="kpi__val" style="font-size:1.4rem;text-transform:uppercase;">${r.action || '—'}</div></div>
           <div class="kpi"><div class="kpi__lbl">Current price</div>
-            <div class="kpi__val">${INR(r.current_price)}<span style="font-size:.5em">/kg</span></div>
+            <div class="kpi__val">${TT(r.current_price, INR2(r.current_price))}<span style="font-size:.5em">/kg</span></div>
             <div class="kpi__sub">${MONTH_NAMES[r.current_month] || ''}</div></div>
           <div class="kpi kpi--good"><div class="kpi__lbl">Best month</div>
             <div class="kpi__val" style="font-size:1.3rem;">${MONTH_NAMES[r.best_month] || '—'}</div>
-            <div class="kpi__sub">${INR(r.best_month_avg_price)}/kg</div></div>
+            <div class="kpi__sub">${INR2(r.best_month_avg_price)}/kg</div></div>
           <div class="kpi kpi--warn"><div class="kpi__lbl">Worst month</div>
             <div class="kpi__val" style="font-size:1.3rem;">${MONTH_NAMES[r.worst_month] || '—'}</div>
-            <div class="kpi__sub">${INR(r.worst_month_avg_price)}/kg</div></div>
+            <div class="kpi__sub">${INR2(r.worst_month_avg_price)}/kg</div></div>
           <div class="kpi kpi--info"><div class="kpi__lbl">Gain if held</div>
             <div class="kpi__val">${FIX(r.potential_gain_pct || 0, 1)}%</div>
             <div class="kpi__sub">${r.months_to_peak} mo to peak</div></div>
@@ -840,12 +849,12 @@
         <div class="kpi-grid">
           <div class="kpi kpi--good"><div class="kpi__lbl">Sell high</div>
             <div class="kpi__val" style="font-size:1.1rem;">${costliest.market_name || costliest.region_id || '—'}</div>
-            <div class="kpi__sub">${INR(costliest.price_inr_per_kg || 0)}/kg</div></div>
+            <div class="kpi__sub">${INR2(costliest.price_inr_per_kg || 0)}/kg</div></div>
           <div class="kpi kpi--warn"><div class="kpi__lbl">Buy low</div>
             <div class="kpi__val" style="font-size:1.1rem;">${cheapest.market_name || cheapest.region_id || '—'}</div>
-            <div class="kpi__sub">${INR(cheapest.price_inr_per_kg || 0)}/kg</div></div>
+            <div class="kpi__sub">${INR2(cheapest.price_inr_per_kg || 0)}/kg</div></div>
           <div class="kpi kpi--info"><div class="kpi__lbl">Max spread</div>
-            <div class="kpi__val">${INR(r.max_price_gap_per_kg)}<span style="font-size:.5em">/kg</span></div>
+            <div class="kpi__val">${TT(r.max_price_gap_per_kg, INR2(r.max_price_gap_per_kg))}<span style="font-size:.5em">/kg</span></div>
             <div class="kpi__sub">${FIX(r.max_gap_pct, 1)}% · ${r.regions_compared} mandis</div></div>
         </div>
 
@@ -855,7 +864,7 @@
             <svg class="alert__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l10-10M17 7v10h-10"/></svg>
             <div class="alert__body">
               <strong>${op.buy_market} → ${op.sell_market}</strong>
-              <p>Buy @ ${INR(op.buy_price)}/kg, sell @ ${INR(op.sell_price)}/kg · Gap <span class="chip chip--green">+${INR(op.price_gap_per_kg)} (${FIX(op.gap_pct, 1)}%)</span></p>
+              <p>Buy @ ${INR2(op.buy_price)}/kg, sell @ ${INR2(op.sell_price)}/kg · Gap <span class="chip chip--green">+${INR2(op.price_gap_per_kg)} (${FIX(op.gap_pct, 1)}%)</span></p>
             </div></div>`).join('')}
 
         <div class="alert"><div class="alert__body"><p style="font-size:.82rem;">${r.note || ''}</p></div></div>`;
@@ -987,12 +996,17 @@
 
       out.innerHTML = `
         <div class="kpi-grid">
-          ${[['N', deficitN], ['P', deficitP], ['K', deficitK]].map(([k, gap]) =>
-            `<div class="kpi ${gap > 0 ? 'kpi--warn' : 'kpi--good'}">
-              <div class="kpi__lbl">${k} deficit</div>
-              <div class="kpi__val">${gap > 0 ? '' : '+'}${Math.round(-gap)} <span style="font-size:.5em">kg/ac</span></div>
-              <div class="kpi__sub">${gap > 0 ? 'Needs ' + Math.round(gap) + ' kg' : 'Sufficient'}</div>
-            </div>`).join('')}
+          ${[['N', deficitN], ['P', deficitP], ['K', deficitK]].map(([k, gap]) => {
+            // Backend convention: gap > 0 means the soil is SHORT by `gap` kg/ac (deficit);
+            // gap <= 0 means the soil already meets or exceeds the crop requirement.
+            const deficit = gap > 0;
+            const mag = Math.round(Math.abs(gap));
+            return `<div class="kpi ${deficit ? 'kpi--warn' : 'kpi--good'}">
+              <div class="kpi__lbl">${k} ${deficit ? 'deficit' : 'status'}</div>
+              <div class="kpi__val">${TT(gap, (deficit ? '−' : '+') + mag)} <span style="font-size:.5em">kg/ac</span></div>
+              <div class="kpi__sub">${deficit ? 'Needs ' + mag + ' kg/ac' : 'Sufficient'}</div>
+            </div>`;
+          }).join('')}
           <div class="kpi kpi--info"><div class="kpi__lbl">Total cost</div>
             <div class="kpi__val">${INR(r.total_fertilizer_cost_per_acre)}</div>
             <div class="kpi__sub">per acre</div></div>
