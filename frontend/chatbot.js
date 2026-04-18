@@ -378,21 +378,54 @@
     const typing = addMsg("bot", '<span class="mm-typing"><span></span><span></span><span></span></span>');
     typing.innerHTML = '<span class="mm-typing"><span></span><span></span><span></span></span>';
 
+    function formatApiError(data) {
+      const d = data && data.detail;
+      if (typeof d === "string") return d;
+      if (Array.isArray(d) && d.length) {
+        return d.map((e) => (e && (e.msg || e.message)) || JSON.stringify(e)).join(" ");
+      }
+      if (d && typeof d === "object") return JSON.stringify(d);
+      return "";
+    }
+
     try {
       const res = await fetch(API, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: msg, context: sessionCtx }),
       });
-      const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch (_) {
+        typing.remove();
+        addMsg("bot",
+          "The server did not return JSON (often HTML from a proxy or 404 page). " +
+          "Open this site via the **Python backend** (e.g. `http://127.0.0.1:8000`) so `/api/chat` exists.");
+        return;
+      }
       typing.remove();
-      addMsg("bot", data.reply || "Sorry, I had trouble answering that.");
+      if (!res.ok) {
+        const errText = formatApiError(data) || res.statusText || "Unknown error";
+        addMsg("bot", `**Something went wrong** (${res.status}): ${errText}`);
+        return;
+      }
+      if (data.reply == null || data.reply === "") {
+        const hint = formatApiError(data);
+        addMsg("bot", hint
+          ? `Unexpected response: ${hint}`
+          : "I got an empty reply from the server. Check that the backend is running and POST /api/chat returns a JSON object with a \"reply\" field.");
+        return;
+      }
+      addMsg("bot", data.reply);
       if (data.context) { sessionCtx = Object.assign(sessionCtx, data.context); persistCtx(); }
       addActions(data.actions || []);
       setSuggestions(data.suggestions || []);
     } catch (err) {
       typing.remove();
-      addMsg("bot", "I couldn't reach the server. Please ensure the backend is running on `/api/chat`.");
+      addMsg("bot",
+        "I couldn't reach the chat API. Serve the app through the backend (e.g. run `uvicorn` and open `http://127.0.0.1:8000`) — " +
+        "opening `index.html` as a file won't work for `/api/chat`.");
     }
   }
 
